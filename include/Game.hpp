@@ -4,6 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
+#include "Grid.hpp"
+
 class Game
 {
 public:
@@ -24,6 +26,8 @@ private:
 
 	sf::Clock m_Clock;
 	sf::Time m_LastFrameTime;
+
+	Grid m_Grid;
 };
 
 #endif
