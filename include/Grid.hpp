@@ -7,7 +7,7 @@
 class Grid : public sf::Drawable, public sf::Transformable
 {
 public:
-	Grid(const sf::Vector2f& size);
+	Grid(const sf::Vector2f& position, const sf::Vector2f& size);
 
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
@@ -15,6 +15,8 @@ public:
 
 private:
 	const int NUM_CELLS;
+	const float CELL_WIDTH;
+	const float CELL_HEIGHT;
 
 	sf::Vector2f m_Size;
 

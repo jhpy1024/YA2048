@@ -1,23 +1,29 @@
 #include "Grid.hpp"
 
-Grid::Grid(const sf::Vector2f& size)
+Grid::Grid(const sf::Vector2f& position, const sf::Vector2f& size)
 	: NUM_CELLS(4)
+	, CELL_WIDTH(size.x / NUM_CELLS)
+	, CELL_HEIGHT(size.y / NUM_CELLS)
 	, m_Size(size)
 	, m_Background(size)
 {
+	setPosition(position);
+
 	m_Background.setFillColor(sf::Color(37, 179, 250, 255));
 
 	sf::RectangleShape line;
+	line.setFillColor(sf::Color(133, 214, 255, 255));
 
 	for (int i = 0; i < NUM_CELLS + 1; ++i)
 	{
-		line.setFillColor(sf::Color(133, 214, 255, 255));
-		line.setPosition(getPosition().x + (m_Size.x / NUM_CELLS) * i, getPosition().y);
-		line.setSize({ 1.f, m_Size.y });
+		// Vertical line
+		line.setPosition(CELL_WIDTH * i, 0.f);
+		line.setSize({ 1.f, size.y });
 		m_Lines.push_back(line);
 
-		line.setPosition(getPosition().x, getPosition().y + (m_Size.y / NUM_CELLS) * i);
-		line.setSize({ m_Size.x, 1.f });
+		// Horizontal line
+		line.setPosition(0.f, CELL_HEIGHT * i);
+		line.setSize({ size.x, 1.f });
 		m_Lines.push_back(line);
 	}
 }

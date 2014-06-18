@@ -6,9 +6,10 @@ const std::string Game::TITLE = "Yet Another 2048 Clone!";
 
 Game::Game()
 	: m_Window(sf::VideoMode(WIDTH, HEIGHT), TITLE)
-	, m_Grid({ WIDTH * (2.f / 2.3f), WIDTH * (2.f / 2.3f) })
+	, m_Grid({ WIDTH / 2.f - WIDTH * (2.f / 2.3f) / 2.f, HEIGHT / 2.f - WIDTH * (2.f / 2.3f) / 2.f },
+			 { WIDTH * (2.f / 2.3f), WIDTH * (2.f / 2.3f) })
 {
-	m_Grid.setPosition(WIDTH / 2.f - m_Grid.getSize().x / 2.f, HEIGHT / 2.f - m_Grid.getSize().x / 2.f);
+	
 }
 
 void Game::handleInput()
