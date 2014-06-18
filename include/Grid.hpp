@@ -17,6 +17,12 @@ public:
 	void moveRight();
 
 private:
+	void createLines();
+	void createStartingCells();
+	void createNewCell();
+	std::vector<sf::Vector2f> getFreeCells() const;
+
+private:
 	const int NUM_CELLS;
 	const float CELL_WIDTH;
 	const float CELL_HEIGHT;
