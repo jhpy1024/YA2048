@@ -11,7 +11,10 @@ public:
 
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-	sf::Vector2f getSize() const;
+	void moveUp();
+	void moveDown();
+	void moveLeft();
+	void moveRight();
 
 private:
 	const int NUM_CELLS;
@@ -22,6 +25,13 @@ private:
 
 	sf::RectangleShape m_Background;
 	std::vector<sf::RectangleShape> m_Lines;
+
+	mutable std::vector<std::vector<sf::RectangleShape>> m_CellShapes;
+
+	sf::Font m_Font;	
+	mutable std::vector<std::vector<sf::Text>> m_CellTexts;
+
+	std::vector<std::vector<int>> m_Cells;
 };
 
 #endif

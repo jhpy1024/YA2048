@@ -21,10 +21,26 @@ void Game::handleInput()
 		{
 			case sf::Event::Closed:
 				m_Window.close();
+			break;
+			case sf::Event::KeyPressed:
+				handleKeyPress(event);
+			break;
 			default:
 				break;
 		}
 	}
+}
+
+void Game::handleKeyPress(const sf::Event& event)
+{
+	if (event.key.code == sf::Keyboard::Up)
+		m_Grid.moveUp();
+	else if (event.key.code == sf::Keyboard::Down)
+		m_Grid.moveDown();
+	else if (event.key.code == sf::Keyboard::Left)
+		m_Grid.moveLeft();
+	else if (event.key.code == sf::Keyboard::Right)
+		m_Grid.moveRight();
 }
 
 void Game::update(sf::Time delta)

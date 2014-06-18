@@ -14,6 +14,8 @@ public:
 	void run();
 
 	void handleInput();
+	void handleKeyPress(const sf::Event& event);
+
 	void update(sf::Time delta);
 	void render();
 	
