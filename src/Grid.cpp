@@ -1,6 +1,8 @@
 #include "Grid.hpp"
 #include "Util.hpp"
 
+#include <iostream>
+
 Grid::Grid(const sf::Vector2f& position, const sf::Vector2f& size)
 	: NUM_CELLS(4)
 	, CELL_WIDTH(size.x / NUM_CELLS)
@@ -23,132 +25,28 @@ Grid::Grid(const sf::Vector2f& position, const sf::Vector2f& size)
 
 void Grid::moveUp()
 {
-	for (int x = 0; x < NUM_CELLS; ++x)
-	{
-		for (int y = 0; y < NUM_CELLS; ++y)
-		{
-			// Find the highest point this cell can be moved down to
-			int newY = y;
-			for (int i = y; i >= 0; --i)
-			{
-				if ((m_Cells[x][i] == 0) && (i < newY))
-					newY = i;
-			}
-
-			// Move the cell up to the highest point it can go
-			if (y != 0 && (m_Cells[x][y] != 0))
-			{
-				m_Cells[x][newY] = m_Cells[x][y];
-				m_Cells[x][y] = 0;
-			}
-
-			// Combine tiles if necessary
-			if (newY != 0 && (m_Cells[x][newY] == m_Cells[x][newY-1]))
-			{
-				m_Cells[x][newY-1] += m_Cells[x][newY];
-				m_Cells[x][newY] = 0;
-			}
-		}
-	}
+	
 
 	createNewCell();
 }
 
 void Grid::moveDown()
 {
-	for (int x = 0; x < NUM_CELLS; ++x)
-	{
-		for (int y = NUM_CELLS - 1; y >= 0; --y)
-		{
-			// Find the lowest point this cell can be moved down to
-			int newY = y;
-			for (int i = y; i < NUM_CELLS; ++i)
-			{
-				if ((m_Cells[x][i] == 0) && (i > newY))
-					newY = i;
-			}
-
-			// Move the cell down to the lowest point it can go
-			if (y != (NUM_CELLS - 1) && (m_Cells[x][y] != 0))
-			{
-				m_Cells[x][newY] = m_Cells[x][y];
-				m_Cells[x][y] = 0;
-			}
-
-			// Combine tiles if necessary
-			if (newY != (NUM_CELLS - 1) && (m_Cells[x][newY] == m_Cells[x][newY+1]))
-			{
-				m_Cells[x][newY+1] += m_Cells[x][newY];
-				m_Cells[x][newY] = 0;
-			}
-		}
-	}
+	
 
 	createNewCell();
 }
 
 void Grid::moveLeft()
 {
-	for (int x = NUM_CELLS - 1; x >= 0; --x)
-	{
-		for (int y = 0; y < NUM_CELLS; ++y)
-		{
-			// Find the leftmost point this cell can be moved to
-			int newX = x;
-			for (int i = x; i >= 0; --i)
-			{
-				if ((m_Cells[i][y] == 0) && (i < newX))
-					newX = i;
-			}
-
-			// Move the cell to the leftmost point it can go
-			if (x != 0 && (m_Cells[x][y] != 0))
-			{
-				m_Cells[newX][y] = m_Cells[x][y];
-				m_Cells[x][y] = 0;
-			}
-
-			// Combine tiles if necessary
-			if (newX != 0 && (m_Cells[newX][y] == m_Cells[newX-1][y]))
-			{
-				m_Cells[newX-1][y] += m_Cells[newX][y];
-				m_Cells[newX][y] = 0;
-			}
-		}
-	}
+	
 
 	createNewCell();	
 }
 
 void Grid::moveRight()
 {
-	for (int x = 0; x < NUM_CELLS; ++x)
-	{
-		for (int y = 0; y < NUM_CELLS; ++y)
-		{
-			// Find the rightmost point this cell can be moved to
-			int newX = x;
-			for (int i = x; i < NUM_CELLS; ++i)
-			{
-				if ((m_Cells[i][y] == 0) && (i > newX))
-					newX = i;
-			}
-
-			// Move the cell to the rightmost point it can go
-			if (x != (NUM_CELLS - 1) && (m_Cells[x][y] != 0))
-			{
-				m_Cells[newX][y] = m_Cells[x][y];
-				m_Cells[x][y] = 0;
-			}
-
-			// Combine tiles if necessary
-			if (newX != (NUM_CELLS - 1) && (m_Cells[newX][y] == m_Cells[newX+1][y]))
-			{
-				m_Cells[newX+1][y] += m_Cells[newX][y];
-				m_Cells[newX][y] = 0;
-			}
-		}
-	}	
+	
 
 	createNewCell();
 }
