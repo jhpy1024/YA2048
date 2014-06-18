@@ -116,12 +116,64 @@ void Grid::moveDown()
 
 void Grid::moveLeft()
 {
+	for (int x = NUM_CELLS - 1; x >= 0; --x)
+	{
+		for (int y = 0; y < NUM_CELLS; ++y)
+		{
+			// Find the leftmost point this cell can be moved to
+			int newX = x;
+			for (int i = x; i >= 0; --i)
+			{
+				if ((m_Cells[i][y] == 0) && (i < newX))
+					newX = i;
+			}
 
+			// Move the cell to the leftmost point it can go
+			if (x != 0 && (m_Cells[x][y] != 0))
+			{
+				m_Cells[newX][y] = m_Cells[x][y];
+				m_Cells[x][y] = 0;
+			}
+
+			// Combine tiles if necessary
+			if (newX != 0 && (m_Cells[newX][y] == m_Cells[newX-1][y]))
+			{
+				m_Cells[newX-1][y] += m_Cells[newX][y];
+				m_Cells[newX][y] = 0;
+			}
+		}
+	}	
 }
 
 void Grid::moveRight()
 {
+	for (int x = 0; x < NUM_CELLS; ++x)
+	{
+		for (int y = 0; y < NUM_CELLS; ++y)
+		{
+			// Find the rightmost point this cell can be moved to
+			int newX = x;
+			for (int i = x; i < NUM_CELLS; ++i)
+			{
+				if ((m_Cells[i][y] == 0) && (i > newX))
+					newX = i;
+			}
 
+			// Move the cell to the rightmost point it can go
+			if (x != (NUM_CELLS - 1) && (m_Cells[x][y] != 0))
+			{
+				m_Cells[newX][y] = m_Cells[x][y];
+				m_Cells[x][y] = 0;
+			}
+
+			// Combine tiles if necessary
+			if (newX != (NUM_CELLS - 1) && (m_Cells[newX][y] == m_Cells[newX+1][y]))
+			{
+				m_Cells[newX+1][y] += m_Cells[newX][y];
+				m_Cells[newX][y] = 0;
+			}
+		}
+	}	
 }
 
 void Grid::draw(sf::RenderTarget& target, sf::RenderStates states) const
