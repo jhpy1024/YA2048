@@ -79,14 +79,54 @@ void Grid::moveDown()
 
 void Grid::moveLeft()
 {
-	
+	for (int x = 1; x < NUM_CELLS; ++x)
+	{
+		for (int y = 0; y < NUM_CELLS; ++y)
+		{
+			if (m_Cells[x][y] == 0)
+				continue;
+
+			int leftmostX = x;
+			for (int i = x; i >= 0; --i)
+			{
+				if (m_Cells[i][y] == 0 && i < leftmostX)
+					leftmostX = i;
+			}
+
+			if (leftmostX != x)
+			{
+				m_Cells[leftmostX][y] = m_Cells[x][y];
+				m_Cells[x][y] = 0;
+			}
+		}
+	}
 
 	createNewCell();	
 }
 
 void Grid::moveRight()
 {
+	for (int x = NUM_CELLS - 2; x >= 0; --x)
+	{
+		for (int y = 0; y < NUM_CELLS; ++y)
+		{
+			if (m_Cells[x][y] == 0)
+				continue;
 
+			int rightmostX = x;
+			for (int i = x; i < NUM_CELLS; ++i)
+			{
+				if (m_Cells[i][y] == 0 && i > rightmostX)
+					rightmostX = i;
+			}
+
+			if (rightmostX != x)
+			{
+				m_Cells[rightmostX][y] = m_Cells[x][y];
+				m_Cells[x][y] = 0;
+			}
+		}
+	}
 
 	createNewCell();
 }
