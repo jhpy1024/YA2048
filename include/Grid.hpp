@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <map>
 
 class Grid : public sf::Drawable, public sf::Transformable
 {
@@ -17,6 +18,7 @@ public:
 	void moveRight();
 
 private:
+	void initCellColors();
 	void createLines();
 	void createStartingCells();
 	void createNewCell();
@@ -33,6 +35,7 @@ private:
 	std::vector<sf::RectangleShape> m_Lines;
 
 	mutable std::vector<std::vector<sf::RectangleShape>> m_CellShapes;
+	mutable std::map<int, sf::Color> m_CellColors;
 
 	sf::Font m_Font;	
 	mutable std::vector<std::vector<sf::Text>> m_CellTexts;

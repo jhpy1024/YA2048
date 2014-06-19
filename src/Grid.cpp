@@ -1,7 +1,7 @@
 #include "Grid.hpp"
 #include "Util.hpp"
 
-#include <iostream>
+#include <cmath>
 
 Grid::Grid(const sf::Vector2f& position, const sf::Vector2f& size)
 	: NUM_CELLS(4)
@@ -19,6 +19,7 @@ Grid::Grid(const sf::Vector2f& position, const sf::Vector2f& size)
 
 	m_Background.setFillColor(sf::Color(37, 179, 250, 255));
 
+	initCellColors();
 	createLines();
 	createStartingCells();	
 }
@@ -168,8 +169,9 @@ void Grid::draw(sf::RenderTarget& target, sf::RenderStates states) const
 		{
 			m_CellShapes[x][y].setPosition(CELL_WIDTH * x, CELL_HEIGHT * y);
 			m_CellShapes[x][y].setSize({ CELL_WIDTH, CELL_HEIGHT });
-			m_CellShapes[x][y].setFillColor((m_Cells[x][y] == 0 ? sf::Color::Black : sf::Color::Red));
-			if (m_Cells[x][y] == 2) m_CellShapes[x][y].setFillColor(sf::Color::Green);
+
+			auto value = m_Cells[x][y];
+			m_CellShapes[x][y].setFillColor(m_CellColors[value]);
 
 			m_CellTexts[x][y].setFont(m_Font);
 			m_CellTexts[x][y].setPosition(CELL_WIDTH * x, CELL_HEIGHT * y);
@@ -233,4 +235,19 @@ void Grid::createStartingCells()
 {
 	for (int i = 0; i < 2; ++i)
 		createNewCell();
+}
+
+void Grid::initCellColors()
+{
+	m_CellColors[2] = sf::Color::Green;
+	m_CellColors[4] = sf::Color::Yellow;
+	m_CellColors[8] = sf::Color::Blue;
+	m_CellColors[16] = sf::Color::Red;
+	m_CellColors[32] = sf::Color::Cyan;
+	m_CellColors[64] = sf::Color::Magenta;
+	m_CellColors[128] = sf::Color(102, 0, 102); // purple-ish
+	m_CellColors[256] = sf::Color(255, 128, 0); // orange-ish
+	m_CellColors[512] = sf::Color(255, 153, 153); // light-red-ish
+	m_CellColors[1024] = sf::Color(255, 153, 204); // light-pink-ish
+	m_CellColors[2048] = sf::Color::Yellow;
 }
