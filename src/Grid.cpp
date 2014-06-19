@@ -145,10 +145,10 @@ void Grid::moveRight()
 				m_Cells[x][y] = 0;
 			}
 
-			if ((rightmostX < NUM_CELLS - 1) && (m_Cells[rightmostX][y] == m_Cells[rightmostX-1][y]))
+			if ((rightmostX < NUM_CELLS - 1) && (m_Cells[rightmostX][y] == m_Cells[rightmostX+1][y]))
 			{
 				m_Cells[rightmostX][y] = 0;
-				m_Cells[rightmostX-1][y] *= 2;
+				m_Cells[rightmostX+1][y] *= 2;
 			}
 		}
 	}
