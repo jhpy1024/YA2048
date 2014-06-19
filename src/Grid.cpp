@@ -25,14 +25,54 @@ Grid::Grid(const sf::Vector2f& position, const sf::Vector2f& size)
 
 void Grid::moveUp()
 {
-	
+	for (int x = 0; x < NUM_CELLS; ++x)
+	{
+		for (int y = 1; y < NUM_CELLS; ++y)
+		{
+			if (m_Cells[x][y] == 0)
+				continue;
+
+			int highestY = y;
+			for (int i = y; i >= 0; --i)
+			{
+				if (m_Cells[x][i] == 0 && i < highestY)
+					highestY = i;
+			}
+
+			if (highestY != y)
+			{
+				m_Cells[x][highestY] = m_Cells[x][y];
+				m_Cells[x][y] = 0;
+			}
+		}
+	}
 
 	createNewCell();
 }
 
 void Grid::moveDown()
 {
-	
+	for (int x = 0; x < NUM_CELLS; ++x)
+	{
+		for (int y = NUM_CELLS - 2; y >= 0; --y)
+		{
+			if (m_Cells[x][y] == 0)
+				continue;
+
+			int lowestY = y;
+			for (int i = y; i < NUM_CELLS; ++i)
+			{
+				if (m_Cells[x][i] == 0 && i > lowestY)
+					lowestY = i;
+			}
+
+			if (lowestY != y)
+			{
+				m_Cells[x][lowestY] = m_Cells[x][y];
+				m_Cells[x][y] = 0;
+			}
+		}
+	}
 
 	createNewCell();
 }
@@ -46,7 +86,7 @@ void Grid::moveLeft()
 
 void Grid::moveRight()
 {
-	
+
 
 	createNewCell();
 }
