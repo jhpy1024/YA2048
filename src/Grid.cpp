@@ -44,6 +44,12 @@ void Grid::moveUp()
 				m_Cells[x][highestY] = m_Cells[x][y];
 				m_Cells[x][y] = 0;
 			}
+
+			if ((highestY > 0) && (m_Cells[x][highestY] == m_Cells[x][highestY-1]))
+			{
+				m_Cells[x][highestY] = 0;
+				m_Cells[x][highestY-1] *= 2;
+			}
 		}
 	}
 
@@ -70,6 +76,13 @@ void Grid::moveDown()
 			{
 				m_Cells[x][lowestY] = m_Cells[x][y];
 				m_Cells[x][y] = 0;
+
+			}
+			
+			if ((lowestY < NUM_CELLS - 1) && (m_Cells[x][lowestY] == m_Cells[x][lowestY+1]))
+			{
+				m_Cells[x][lowestY] = 0;
+				m_Cells[x][lowestY+1] *= 2;
 			}
 		}
 	}
@@ -98,6 +111,12 @@ void Grid::moveLeft()
 				m_Cells[leftmostX][y] = m_Cells[x][y];
 				m_Cells[x][y] = 0;
 			}
+
+			if ((leftmostX > 0) && (m_Cells[leftmostX][y] == m_Cells[leftmostX-1][y]))
+			{
+				m_Cells[leftmostX][y] = 0;
+				m_Cells[leftmostX-1][y] *= 2;
+			}
 		}
 	}
 
@@ -124,6 +143,12 @@ void Grid::moveRight()
 			{
 				m_Cells[rightmostX][y] = m_Cells[x][y];
 				m_Cells[x][y] = 0;
+			}
+
+			if ((rightmostX < NUM_CELLS - 1) && (m_Cells[rightmostX][y] == m_Cells[rightmostX-1][y]))
+			{
+				m_Cells[rightmostX][y] = 0;
+				m_Cells[rightmostX-1][y] *= 2;
 			}
 		}
 	}
