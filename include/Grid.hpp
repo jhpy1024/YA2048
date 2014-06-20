@@ -28,6 +28,7 @@ private:
 	const int NUM_CELLS;
 	const float CELL_WIDTH;
 	const float CELL_HEIGHT;
+	const float CELL_PADDING;
 
 	sf::Vector2f m_Size;
 

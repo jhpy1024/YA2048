@@ -7,13 +7,14 @@ Grid::Grid(const sf::Vector2f& position, const sf::Vector2f& size)
 	: NUM_CELLS(4)
 	, CELL_WIDTH(size.x / NUM_CELLS)
 	, CELL_HEIGHT(size.y / NUM_CELLS)
+	, CELL_PADDING(5.f)
 	, m_Size(size)
 	, m_Background(size)
 	, m_CellShapes(NUM_CELLS, std::vector<sf::RectangleShape>(NUM_CELLS))
 	, m_CellTexts(NUM_CELLS, std::vector<sf::Text>(NUM_CELLS))
 	, m_Cells(NUM_CELLS, std::vector<int>(NUM_CELLS, 0))
 {
-	setPosition(position);
+	setPosition(position.x - CELL_PADDING * NUM_CELLS / 2, position.y);
 
 	m_Font.loadFromFile("res/fonts/Ubuntu-M.ttf");
 
@@ -167,14 +168,15 @@ void Grid::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		for (int y = 0; y < NUM_CELLS; ++y)
 		{
-			m_CellShapes[x][y].setPosition(CELL_WIDTH * x, CELL_HEIGHT * y);
+			m_CellShapes[x][y].setPosition((CELL_WIDTH + CELL_PADDING) * x, (CELL_HEIGHT + CELL_PADDING) * y);
 			m_CellShapes[x][y].setSize({ CELL_WIDTH, CELL_HEIGHT });
 
 			auto value = m_Cells[x][y];
 			m_CellShapes[x][y].setFillColor(m_CellColors[value]);
 
 			m_CellTexts[x][y].setFont(m_Font);
-			m_CellTexts[x][y].setPosition(CELL_WIDTH * x, CELL_HEIGHT * y);
+			m_CellTexts[x][y].setPosition((CELL_WIDTH + CELL_PADDING) * x + 32.f,
+										  (CELL_HEIGHT + CELL_PADDING) * y + 23.f);
 			m_CellTexts[x][y].setString((m_Cells[x][y] != 0 ? std::to_string(m_Cells[x][y]) : ""));
 			m_CellTexts[x][y].setColor(sf::Color::Black);
 
@@ -215,18 +217,18 @@ std::vector<sf::Vector2f> Grid::getFreeCells() const
 void Grid::createLines()
 {
 	sf::RectangleShape line;
-	line.setFillColor(sf::Color(133, 214, 255, 255));
+	line.setFillColor(sf::Color(128, 128, 128));
 
 	for (int i = 0; i < NUM_CELLS + 1; ++i)
 	{
 		// Vertical line
-		line.setPosition(CELL_WIDTH * i, 0.f);
-		line.setSize({ 1.f, m_Size.y });
+		line.setPosition(-CELL_PADDING + (CELL_WIDTH + CELL_PADDING) * i, -CELL_PADDING);
+		line.setSize({ CELL_PADDING, m_Size.y + CELL_PADDING * NUM_CELLS });
 		m_Lines.push_back(line);
 
 		// Horizontal line
-		line.setPosition(0.f, CELL_HEIGHT * i);
-		line.setSize({ m_Size.x, 1.f });
+		line.setPosition(0.f, -CELL_PADDING + (CELL_HEIGHT + CELL_PADDING) * i);
+		line.setSize({ m_Size.x + CELL_PADDING * NUM_CELLS, CELL_PADDING });
 		m_Lines.push_back(line);
 	}
 }
@@ -239,15 +241,16 @@ void Grid::createStartingCells()
 
 void Grid::initCellColors()
 {
-	m_CellColors[2] = sf::Color::Green;
-	m_CellColors[4] = sf::Color::Yellow;
-	m_CellColors[8] = sf::Color::Blue;
-	m_CellColors[16] = sf::Color::Red;
-	m_CellColors[32] = sf::Color::Cyan;
-	m_CellColors[64] = sf::Color::Magenta;
-	m_CellColors[128] = sf::Color(102, 0, 102); // purple-ish
-	m_CellColors[256] = sf::Color(255, 128, 0); // orange-ish
-	m_CellColors[512] = sf::Color(255, 153, 153); // light-red-ish
-	m_CellColors[1024] = sf::Color(255, 153, 204); // light-pink-ish
-	m_CellColors[2048] = sf::Color::Yellow;
+	m_CellColors[0] = sf::Color(32, 32, 32);
+	m_CellColors[2] = sf::Color(85, 98, 112);
+	m_CellColors[4] = sf::Color(78, 205, 196);
+	m_CellColors[8] = sf::Color(199, 244, 100);
+	m_CellColors[16] = sf::Color(255, 107, 107);
+	m_CellColors[32] = sf::Color(196, 77, 88);
+	m_CellColors[64] = sf::Color(73, 10, 61);
+	m_CellColors[128] = sf::Color(189, 21, 80);
+	m_CellColors[256] = sf::Color(233, 127, 2);
+	m_CellColors[512] = sf::Color(248, 202, 0);
+	m_CellColors[1024] = sf::Color(138, 155, 15);
+	m_CellColors[2048] = sf::Color(255, 229, 69);
 }

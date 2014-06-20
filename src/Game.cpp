@@ -1,5 +1,7 @@
 #include "Game.hpp"
 
+#include <iostream>
+
 const float Game::WIDTH = 400;
 const float Game::HEIGHT = 600;
 const std::string Game::TITLE = "Yet Another 2048 Clone!";
@@ -50,7 +52,12 @@ void Game::update(sf::Time delta)
 
 void Game::render()
 {
-	m_Window.clear(sf::Color(133, 214, 255, 255));
+	auto absCosOfTime = std::abs(std::cos(m_Clock.getElapsedTime().asSeconds() / 3));
+	auto red = 50 + absCosOfTime * 205;
+	auto green = 50 + absCosOfTime * 205;
+	auto blue = 50 + absCosOfTime * 205;
+
+	m_Window.clear(sf::Color(red, green, blue));
 
 	m_Window.draw(m_Grid);
 
