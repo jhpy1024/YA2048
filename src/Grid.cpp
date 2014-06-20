@@ -2,7 +2,6 @@
 #include "Util.hpp"
 
 #include <cmath>
-#include <iostream>
 
 Grid::Grid(const sf::Vector2f& position, const sf::Vector2f& size)
 	: NUM_CELLS(4)
@@ -14,6 +13,7 @@ Grid::Grid(const sf::Vector2f& position, const sf::Vector2f& size)
 	, m_CellShapes(NUM_CELLS, std::vector<sf::RectangleShape>(NUM_CELLS))
 	, m_CellTexts(NUM_CELLS, std::vector<sf::Text>(NUM_CELLS))
 	, m_Cells(NUM_CELLS, std::vector<int>(NUM_CELLS, 0))
+	, m_GameOver(false)
 {
 	setPosition(position.x - CELL_PADDING * NUM_CELLS / 2, position.y);
 
@@ -28,6 +28,8 @@ Grid::Grid(const sf::Vector2f& position, const sf::Vector2f& size)
 
 void Grid::moveUp()
 {
+	int numMoves = 0;
+
 	for (int x = 0; x < NUM_CELLS; ++x)
 	{
 		for (int y = 1; y < NUM_CELLS; ++y)
@@ -46,6 +48,8 @@ void Grid::moveUp()
 			{
 				m_Cells[x][highestY] = m_Cells[x][y];
 				m_Cells[x][y] = 0;
+
+				++numMoves;
 			}
 
 			if ((highestY > 0) && (m_Cells[x][highestY] == m_Cells[x][highestY-1]))
@@ -56,11 +60,16 @@ void Grid::moveUp()
 		}
 	}
 
-	createNewCell();
+	if ((numMoves == 0) && (getFreeCells().size() == 0))
+		m_GameOver = true;
+	else
+		createNewCell();
 }
 
 void Grid::moveDown()
 {
+	int numMoves = 0;
+
 	for (int x = 0; x < NUM_CELLS; ++x)
 	{
 		for (int y = NUM_CELLS - 2; y >= 0; --y)
@@ -80,6 +89,7 @@ void Grid::moveDown()
 				m_Cells[x][lowestY] = m_Cells[x][y];
 				m_Cells[x][y] = 0;
 
+				++numMoves;
 			}
 			
 			if ((lowestY < NUM_CELLS - 1) && (m_Cells[x][lowestY] == m_Cells[x][lowestY+1]))
@@ -90,11 +100,16 @@ void Grid::moveDown()
 		}
 	}
 
-	createNewCell();
+	if ((numMoves == 0) && (getFreeCells().size() == 0))
+		m_GameOver = true;
+	else
+		createNewCell();
 }
 
 void Grid::moveLeft()
 {
+	int numMoves = 0;
+
 	for (int x = 1; x < NUM_CELLS; ++x)
 	{
 		for (int y = 0; y < NUM_CELLS; ++y)
@@ -113,6 +128,8 @@ void Grid::moveLeft()
 			{
 				m_Cells[leftmostX][y] = m_Cells[x][y];
 				m_Cells[x][y] = 0;
+
+				++numMoves;
 			}
 
 			if ((leftmostX > 0) && (m_Cells[leftmostX][y] == m_Cells[leftmostX-1][y]))
@@ -123,11 +140,16 @@ void Grid::moveLeft()
 		}
 	}
 
-	createNewCell();	
+	if ((numMoves == 0) && (getFreeCells().size() == 0))
+		m_GameOver = true;
+	else
+		createNewCell();	
 }
 
 void Grid::moveRight()
 {
+	int numMoves = 0;
+
 	for (int x = NUM_CELLS - 2; x >= 0; --x)
 	{
 		for (int y = 0; y < NUM_CELLS; ++y)
@@ -146,6 +168,8 @@ void Grid::moveRight()
 			{
 				m_Cells[rightmostX][y] = m_Cells[x][y];
 				m_Cells[x][y] = 0;
+
+				++numMoves;
 			}
 
 			if ((rightmostX < NUM_CELLS - 1) && (m_Cells[rightmostX][y] == m_Cells[rightmostX+1][y]))
@@ -156,7 +180,10 @@ void Grid::moveRight()
 		}
 	}
 
-	createNewCell();
+	if ((numMoves == 0) && (getFreeCells().size() == 0))
+		m_GameOver = true;
+	else
+		createNewCell();
 }
 
 void Grid::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -177,7 +204,8 @@ void Grid::draw(sf::RenderTarget& target, sf::RenderStates states) const
 			m_CellTexts[x][y].setFont(m_Font);
 			m_CellTexts[x][y].setString((m_Cells[x][y] != 0 ? std::to_string(m_Cells[x][y]) : ""));
 			m_CellTexts[x][y].setColor(sf::Color::Black);
-			m_CellTexts[x][y].setOrigin(m_CellTexts[x][y].getGlobalBounds().width / 2.f, m_CellTexts[x][y].getGlobalBounds().height / 2.f);
+			auto localBounds = m_CellTexts[x][y].getLocalBounds();
+			m_CellTexts[x][y].setOrigin(localBounds.left + localBounds.width / 2.f, localBounds.top + localBounds.height / 2.f);
 
 			auto tx = ((CELL_WIDTH + CELL_PADDING) * x) + (CELL_WIDTH / 2.f);
 			auto ty = ((CELL_HEIGHT + CELL_PADDING) * y) + (CELL_HEIGHT / 2.f);
@@ -191,6 +219,21 @@ void Grid::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 	for (auto& line : m_Lines)
 		target.draw(line, states);
+}
+
+void Grid::reset()
+{
+	m_GameOver = false;
+	m_CellShapes = std::vector<std::vector<sf::RectangleShape>>(NUM_CELLS, std::vector<sf::RectangleShape>(NUM_CELLS));
+	m_CellTexts = std::vector<std::vector<sf::Text>>(NUM_CELLS, std::vector<sf::Text>(NUM_CELLS));
+	m_Cells = std::vector<std::vector<int>>(NUM_CELLS, std::vector<int>(NUM_CELLS, 0));
+
+	createStartingCells();
+}
+
+bool Grid::isGameOver() const
+{
+	return m_GameOver;
 }
 
 void Grid::createNewCell()

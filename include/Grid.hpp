@@ -17,6 +17,10 @@ public:
 	void moveLeft();
 	void moveRight();
 
+	bool isGameOver() const;
+
+	void reset();
+
 private:
 	void initCellColors();
 	void createLines();
@@ -42,6 +46,8 @@ private:
 	mutable std::vector<std::vector<sf::Text>> m_CellTexts;
 
 	std::vector<std::vector<int>> m_Cells;
+
+	bool m_GameOver;
 };
 
 #endif

@@ -10,8 +10,18 @@ Game::Game()
 	: m_Window(sf::VideoMode(WIDTH, HEIGHT), TITLE)
 	, m_Grid({ WIDTH / 2.f - WIDTH * (2.f / 2.3f) / 2.f, HEIGHT / 2.f - WIDTH * (2.f / 2.3f) / 2.f },
 			 { WIDTH * (2.f / 2.3f), WIDTH * (2.f / 2.3f) })
+	, m_GameOver(false)
 {
-	
+	m_GameOverOverlay.setSize({ WIDTH, HEIGHT });
+	m_GameOverOverlay.setFillColor(sf::Color(128, 0, 0, 128));
+
+	m_GameOverFont.loadFromFile("res/fonts/Ubuntu-M.ttf");
+	m_GameOverText.setFont(m_GameOverFont);
+	m_GameOverText.setCharacterSize(24);
+	m_GameOverText.setString("          Game Over!\nPress [SPACE] to retry");
+	auto localBounds = m_GameOverText.getLocalBounds();
+	m_GameOverText.setOrigin(localBounds.left + localBounds.width / 2.f, localBounds.top + localBounds.height / 2.f);
+	m_GameOverText.setPosition(WIDTH / 2.f, HEIGHT / 2.f);
 }
 
 void Game::handleInput()
@@ -35,19 +45,30 @@ void Game::handleInput()
 
 void Game::handleKeyPress(const sf::Event& event)
 {
-	if (event.key.code == sf::Keyboard::Up)
-		m_Grid.moveUp();
-	else if (event.key.code == sf::Keyboard::Down)
-		m_Grid.moveDown();
-	else if (event.key.code == sf::Keyboard::Left)
-		m_Grid.moveLeft();
-	else if (event.key.code == sf::Keyboard::Right)
-		m_Grid.moveRight();
+	if (m_GameOver)
+	{
+		if (event.key.code == sf::Keyboard::Space)
+		{
+			m_GameOver = false;
+			m_Grid.reset();
+		}
+	}
+	else
+	{
+		if (event.key.code == sf::Keyboard::Up)
+			m_Grid.moveUp();
+		else if (event.key.code == sf::Keyboard::Down)
+			m_Grid.moveDown();
+		else if (event.key.code == sf::Keyboard::Left)
+			m_Grid.moveLeft();
+		else if (event.key.code == sf::Keyboard::Right)
+			m_Grid.moveRight();	
+	}
 }
 
 void Game::update(sf::Time delta)
 {
-
+	m_GameOver = m_Grid.isGameOver();
 }
 
 void Game::render()
@@ -60,6 +81,12 @@ void Game::render()
 	m_Window.clear(sf::Color(red, green, blue));
 
 	m_Window.draw(m_Grid);
+
+	if (m_GameOver)
+	{
+		m_Window.draw(m_GameOverOverlay);
+		m_Window.draw(m_GameOverText);
+	}
 
 	m_Window.display();
 }

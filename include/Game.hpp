@@ -30,6 +30,11 @@ private:
 	sf::Time m_LastFrameTime;
 
 	Grid m_Grid;
+
+	bool m_GameOver;
+	sf::RectangleShape m_GameOverOverlay;
+	sf::Font m_GameOverFont;
+	sf::Text m_GameOverText;
 };
 
 #endif
