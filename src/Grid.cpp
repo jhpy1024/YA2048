@@ -2,6 +2,7 @@
 #include "Util.hpp"
 
 #include <cmath>
+#include <iostream>
 
 Grid::Grid(const sf::Vector2f& position, const sf::Vector2f& size)
 	: NUM_CELLS(4)
@@ -171,14 +172,17 @@ void Grid::draw(sf::RenderTarget& target, sf::RenderStates states) const
 			m_CellShapes[x][y].setPosition((CELL_WIDTH + CELL_PADDING) * x, (CELL_HEIGHT + CELL_PADDING) * y);
 			m_CellShapes[x][y].setSize({ CELL_WIDTH, CELL_HEIGHT });
 
-			auto value = m_Cells[x][y];
-			m_CellShapes[x][y].setFillColor(m_CellColors[value]);
+			m_CellShapes[x][y].setFillColor(m_CellColors[m_Cells[x][y]]);
 
 			m_CellTexts[x][y].setFont(m_Font);
-			m_CellTexts[x][y].setPosition((CELL_WIDTH + CELL_PADDING) * x + 32.f,
-										  (CELL_HEIGHT + CELL_PADDING) * y + 23.f);
 			m_CellTexts[x][y].setString((m_Cells[x][y] != 0 ? std::to_string(m_Cells[x][y]) : ""));
 			m_CellTexts[x][y].setColor(sf::Color::Black);
+			m_CellTexts[x][y].setOrigin(m_CellTexts[x][y].getGlobalBounds().width / 2.f, m_CellTexts[x][y].getGlobalBounds().height / 2.f);
+
+			auto tx = ((CELL_WIDTH + CELL_PADDING) * x) + (CELL_WIDTH / 2.f);
+			auto ty = ((CELL_HEIGHT + CELL_PADDING) * y) + (CELL_HEIGHT / 2.f);
+
+			m_CellTexts[x][y].setPosition(tx, ty);
 
 			target.draw(m_CellShapes[x][y], states);
 			target.draw(m_CellTexts[x][y], states);
