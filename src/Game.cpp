@@ -22,6 +22,11 @@ Game::Game()
 	auto localBounds = m_GameOverText.getLocalBounds();
 	m_GameOverText.setOrigin(localBounds.left + localBounds.width / 2.f, localBounds.top + localBounds.height / 2.f);
 	m_GameOverText.setPosition(WIDTH / 2.f, HEIGHT / 2.f);
+
+	m_ScoreText.setFont(m_GameOverFont);
+	m_ScoreText.setCharacterSize(48);
+	m_ScoreText.setColor(sf::Color::Black);
+	m_ScoreText.setString("Score: 0");
 }
 
 void Game::handleInput()
@@ -69,6 +74,8 @@ void Game::handleKeyPress(const sf::Event& event)
 void Game::update(sf::Time delta)
 {
 	m_GameOver = m_Grid.isGameOver();
+
+	updateScoreText();
 }
 
 void Game::render()
@@ -81,6 +88,7 @@ void Game::render()
 	m_Window.clear(sf::Color(red, green, blue));
 
 	m_Window.draw(m_Grid);
+	m_Window.draw(m_ScoreText);
 
 	if (m_GameOver)
 	{
@@ -104,4 +112,12 @@ void Game::run()
 
 		m_LastFrameTime = currentTime;
 	}
+}
+
+void Game::updateScoreText()
+{
+	m_ScoreText.setString("Score: " + std::to_string(m_Grid.getScore()));
+	auto bounds = m_ScoreText.getLocalBounds();
+	m_ScoreText.setOrigin(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
+	m_ScoreText.setPosition(WIDTH / 2.f, HEIGHT * 0.1f);
 }

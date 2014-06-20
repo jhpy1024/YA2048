@@ -18,6 +18,9 @@ public:
 
 	void update(sf::Time delta);
 	void render();
+
+private:
+	void updateScoreText();
 	
 private:
 	static const float WIDTH;
@@ -35,6 +38,8 @@ private:
 	sf::RectangleShape m_GameOverOverlay;
 	sf::Font m_GameOverFont;
 	sf::Text m_GameOverText;
+
+	sf::Text m_ScoreText;
 };
 
 #endif

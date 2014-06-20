@@ -21,6 +21,8 @@ public:
 
 	void reset();
 
+	int getScore() const;
+
 private:
 	void initCellColors();
 	void createLines();
@@ -48,6 +50,8 @@ private:
 	std::vector<std::vector<int>> m_Cells;
 
 	bool m_GameOver;
+
+	int m_Score;
 };
 
 #endif

@@ -14,6 +14,7 @@ Grid::Grid(const sf::Vector2f& position, const sf::Vector2f& size)
 	, m_CellTexts(NUM_CELLS, std::vector<sf::Text>(NUM_CELLS))
 	, m_Cells(NUM_CELLS, std::vector<int>(NUM_CELLS, 0))
 	, m_GameOver(false)
+	, m_Score(0)
 {
 	setPosition(position.x - CELL_PADDING * NUM_CELLS / 2, position.y);
 
@@ -56,6 +57,8 @@ void Grid::moveUp()
 			{
 				m_Cells[x][highestY] = 0;
 				m_Cells[x][highestY-1] *= 2;
+
+				m_Score += m_Cells[x][highestY-1];
 			}
 		}
 	}
@@ -96,6 +99,8 @@ void Grid::moveDown()
 			{
 				m_Cells[x][lowestY] = 0;
 				m_Cells[x][lowestY+1] *= 2;
+
+				m_Score += m_Cells[x][lowestY+1];
 			}
 		}
 	}
@@ -136,6 +141,8 @@ void Grid::moveLeft()
 			{
 				m_Cells[leftmostX][y] = 0;
 				m_Cells[leftmostX-1][y] *= 2;
+
+				m_Score += m_Cells[leftmostX-1][y];
 			}
 		}
 	}
@@ -176,6 +183,8 @@ void Grid::moveRight()
 			{
 				m_Cells[rightmostX][y] = 0;
 				m_Cells[rightmostX+1][y] *= 2;
+
+				m_Score += m_Cells[rightmostX+1][y];
 			}
 		}
 	}
@@ -229,6 +238,11 @@ void Grid::reset()
 	m_Cells = std::vector<std::vector<int>>(NUM_CELLS, std::vector<int>(NUM_CELLS, 0));
 
 	createStartingCells();
+}
+
+int Grid::getScore() const
+{
+	return m_Score;
 }
 
 bool Grid::isGameOver() const
