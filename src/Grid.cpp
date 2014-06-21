@@ -233,6 +233,7 @@ void Grid::draw(sf::RenderTarget& target, sf::RenderStates states) const
 void Grid::reset()
 {
 	m_GameOver = false;
+	m_Score = 0;
 	m_CellShapes = std::vector<std::vector<sf::RectangleShape>>(NUM_CELLS, std::vector<sf::RectangleShape>(NUM_CELLS));
 	m_CellTexts = std::vector<std::vector<sf::Text>>(NUM_CELLS, std::vector<sf::Text>(NUM_CELLS));
 	m_Cells = std::vector<std::vector<int>>(NUM_CELLS, std::vector<int>(NUM_CELLS, 0));
