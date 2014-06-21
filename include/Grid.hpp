@@ -57,6 +57,19 @@ private:
 	bool m_GameOver;
 
 	int m_Score;
+
+	struct AnimData
+	{
+		AnimData(const sf::Vector2f& start, const sf::Vector2f& end)
+			: start(start)
+			, end(end)
+		{
+		}
+
+		sf::Vector2f start;
+		sf::Vector2f end;
+	};
+	mutable std::vector<std::pair<AnimData, sf::RectangleShape>> m_AnimShapes;
 };
 
 #endif
