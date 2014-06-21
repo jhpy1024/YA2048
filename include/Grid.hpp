@@ -30,6 +30,11 @@ private:
 	void createNewCell();
 	std::vector<sf::Vector2f> getFreeCells() const;
 
+	void drawBackground(sf::RenderTarget& target, sf::RenderStates states) const;
+	void drawLines(sf::RenderTarget& target, sf::RenderStates states) const;
+	void drawCells(sf::RenderTarget& target, sf::RenderStates states) const;
+	void drawAnimShapes(sf::RenderTarget& target, sf::RenderStates states) const;
+
 private:
 	const int NUM_CELLS;
 	const float CELL_WIDTH;
@@ -52,6 +57,13 @@ private:
 	bool m_GameOver;
 
 	int m_Score;
+
+	struct AnimData
+	{
+		sf::Vector2f start;
+		sf::Vector2f end;
+	};
+	std::vector<std::pair<AnimData, sf::RectangleShape>> m_AnimShapes;
 };
 
 #endif

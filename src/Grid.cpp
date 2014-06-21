@@ -199,8 +199,26 @@ void Grid::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	states.transform *= getTransform();
 
-	target.draw(m_Background, states);
+	drawBackground(target, states);
+	drawLines(target, states);
+	drawCells(target, states);
+	drawAnimShapes(target, states);
 
+}
+
+void Grid::drawBackground(sf::RenderTarget& target, sf::RenderStates states) const
+{
+	target.draw(m_Background, states);
+}
+
+void Grid::drawLines(sf::RenderTarget& target, sf::RenderStates states) const 
+{
+	for (auto& line : m_Lines)
+		target.draw(line, states);
+}
+
+void Grid::drawCells(sf::RenderTarget& target, sf::RenderStates states) const
+{
 	for (int x = 0; x < NUM_CELLS; ++x)
 	{
 		for (int y = 0; y < NUM_CELLS; ++y)
@@ -225,9 +243,11 @@ void Grid::draw(sf::RenderTarget& target, sf::RenderStates states) const
 			target.draw(m_CellTexts[x][y], states);
 		}
 	}
+}
 
-	for (auto& line : m_Lines)
-		target.draw(line, states);
+void Grid::drawAnimShapes(sf::RenderTarget& target, sf::RenderStates states) const
+{
+
 }
 
 void Grid::reset()
