@@ -57,13 +57,6 @@ private:
 	bool m_GameOver;
 
 	int m_Score;
-
-	struct AnimData
-	{
-		sf::Vector2f start;
-		sf::Vector2f end;
-	};
-	std::vector<std::pair<AnimData, sf::RectangleShape>> m_AnimShapes;
 };
 
 #endif

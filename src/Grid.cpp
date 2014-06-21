@@ -202,8 +202,6 @@ void Grid::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	drawBackground(target, states);
 	drawLines(target, states);
 	drawCells(target, states);
-	drawAnimShapes(target, states);
-
 }
 
 void Grid::drawBackground(sf::RenderTarget& target, sf::RenderStates states) const
@@ -243,11 +241,6 @@ void Grid::drawCells(sf::RenderTarget& target, sf::RenderStates states) const
 			target.draw(m_CellTexts[x][y], states);
 		}
 	}
-}
-
-void Grid::drawAnimShapes(sf::RenderTarget& target, sf::RenderStates states) const
-{
-
 }
 
 void Grid::reset()
