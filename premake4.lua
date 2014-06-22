@@ -9,7 +9,7 @@ solution "YA2048"
 		includedirs { "include" }
 		links { "sfml-graphics", "sfml-window", "sfml-system", "jpeg", "GLEW" }
 		location "build/"
-		buildoptions "-std=c++11"
+		buildoptions "-std=c++11 -Wno-narrowing"
 
 		configuration "Debug"
 			flags { "ExtraWarnings" }

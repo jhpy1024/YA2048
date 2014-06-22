@@ -53,6 +53,11 @@ private:
 	bool cellsEqual(int x, int y, int x1, int y1) const;
 	bool isGridFull() const;
 
+	sf::Vector2f tileToWorld(const sf::Vector2f& pos) const;
+	sf::Vector2f worldToTile(const sf::Vector2f& pos) const;
+
+	void createAnimation(const sf::Vector2f& start, const sf::Vector2f& end);
+
 private:
 	const int NUM_CELLS;
 	const float CELL_WIDTH;
