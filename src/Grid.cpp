@@ -36,35 +36,22 @@ void Grid::moveUp()
 	{
 		for (int y = 1; y < NUM_CELLS; ++y)
 		{
-			if (m_Cells[x][y] == 0)
+			if (isCellEmpty(x, y))
 				continue;
 
-			int highestY = y;
-			for (int i = y; i >= 0; --i)
-			{
-				if (m_Cells[x][i] == 0 && i < highestY)
-					highestY = i;
-			}
-
+			int highestY = getHighestCellFrom(x, y);
 			if (highestY != y)
 			{
-				m_Cells[x][highestY] = m_Cells[x][y];
-				m_Cells[x][y] = 0;
-
+				moveCell(x, y, x, highestY);
 				++numMoves;
 			}
 
-			if ((highestY > 0) && (m_Cells[x][highestY] == m_Cells[x][highestY-1]))
-			{
-				m_Cells[x][highestY] = 0;
-				m_Cells[x][highestY-1] *= 2;
-
-				m_Score += m_Cells[x][highestY-1];
-			}
+			if ((highestY > 0) && cellsEqual(x, highestY, x, highestY - 1))
+				combineCells(x, highestY, x, highestY - 1);
 		}
 	}
 
-	if ((numMoves == 0) && (getFreeCells().size() == 0))
+	if ((numMoves == 0) && isGridFull())
 		m_GameOver = true;
 	else
 		createNewCell();
@@ -78,35 +65,22 @@ void Grid::moveDown()
 	{
 		for (int y = NUM_CELLS - 2; y >= 0; --y)
 		{
-			if (m_Cells[x][y] == 0)
+			if (isCellEmpty(x, y))
 				continue;
 
-			int lowestY = y;
-			for (int i = y; i < NUM_CELLS; ++i)
-			{
-				if (m_Cells[x][i] == 0 && i > lowestY)
-					lowestY = i;
-			}
-
+			int lowestY = getLowestCellFrom(x, y);
 			if (lowestY != y)
 			{
-				m_Cells[x][lowestY] = m_Cells[x][y];
-				m_Cells[x][y] = 0;
-
+				moveCell(x, y, x, lowestY);
 				++numMoves;
 			}
 			
-			if ((lowestY < NUM_CELLS - 1) && (m_Cells[x][lowestY] == m_Cells[x][lowestY+1]))
-			{
-				m_Cells[x][lowestY] = 0;
-				m_Cells[x][lowestY+1] *= 2;
-
-				m_Score += m_Cells[x][lowestY+1];
-			}
+			if ((lowestY < NUM_CELLS - 1) && cellsEqual(x, lowestY, x, lowestY + 1))
+				combineCells(x, lowestY, x, lowestY + 1);
 		}
 	}
 
-	if ((numMoves == 0) && (getFreeCells().size() == 0))
+	if ((numMoves == 0) && isGridFull())
 		m_GameOver = true;
 	else
 		createNewCell();
@@ -120,35 +94,22 @@ void Grid::moveLeft()
 	{
 		for (int y = 0; y < NUM_CELLS; ++y)
 		{
-			if (m_Cells[x][y] == 0)
+			if (isCellEmpty(x, y))
 				continue;
 
-			int leftmostX = x;
-			for (int i = x; i >= 0; --i)
-			{
-				if (m_Cells[i][y] == 0 && i < leftmostX)
-					leftmostX = i;
-			}
-
+			int leftmostX = getLeftmostCellFrom(x, y);
 			if (leftmostX != x)
 			{
-				m_Cells[leftmostX][y] = m_Cells[x][y];
-				m_Cells[x][y] = 0;
-
+				moveCell(x, y, leftmostX, y);
 				++numMoves;
 			}
 
-			if ((leftmostX > 0) && (m_Cells[leftmostX][y] == m_Cells[leftmostX-1][y]))
-			{
-				m_Cells[leftmostX][y] = 0;
-				m_Cells[leftmostX-1][y] *= 2;
-
-				m_Score += m_Cells[leftmostX-1][y];
-			}
+			if ((leftmostX > 0) && cellsEqual(leftmostX, y, leftmostX - 1, y))
+				combineCells(leftmostX, y, leftmostX - 1, y);
 		}
 	}
 
-	if ((numMoves == 0) && (getFreeCells().size() == 0))
+	if ((numMoves == 0) && isGridFull())
 		m_GameOver = true;
 	else
 		createNewCell();	
@@ -162,35 +123,22 @@ void Grid::moveRight()
 	{
 		for (int y = 0; y < NUM_CELLS; ++y)
 		{
-			if (m_Cells[x][y] == 0)
+			if (isCellEmpty(x, y))
 				continue;
 
-			int rightmostX = x;
-			for (int i = x; i < NUM_CELLS; ++i)
-			{
-				if (m_Cells[i][y] == 0 && i > rightmostX)
-					rightmostX = i;
-			}
-
+			int rightmostX = getRightmostCellFrom(x, y);
 			if (rightmostX != x)
 			{
-				m_Cells[rightmostX][y] = m_Cells[x][y];
-				m_Cells[x][y] = 0;
-
+				moveCell(x, y, rightmostX, y);
 				++numMoves;
 			}
 
-			if ((rightmostX < NUM_CELLS - 1) && (m_Cells[rightmostX][y] == m_Cells[rightmostX+1][y]))
-			{
-				m_Cells[rightmostX][y] = 0;
-				m_Cells[rightmostX+1][y] *= 2;
-
-				m_Score += m_Cells[rightmostX+1][y];
-			}
+			if ((rightmostX < NUM_CELLS - 1) && cellsEqual(rightmostX, y, rightmostX + 1, y))
+				combineCells(rightmostX, y, rightmostX + 1, y);
 		}
 	}
 
-	if ((numMoves == 0) && (getFreeCells().size() == 0))
+	if ((numMoves == 0) && isGridFull())
 		m_GameOver = true;
 	else
 		createNewCell();
@@ -203,6 +151,7 @@ void Grid::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	drawBackground(target, states);
 	drawLines(target, states);
 	drawCells(target, states);
+	drawCellsText(target, states);
 }
 
 void Grid::drawBackground(sf::RenderTarget& target, sf::RenderStates states) const
@@ -223,15 +172,26 @@ void Grid::drawCells(sf::RenderTarget& target, sf::RenderStates states) const
 		for (int y = 0; y < NUM_CELLS; ++y)
 		{
 			m_CellShapes[x][y].setFillColor(m_CellColors[m_Cells[x][y]]);
+			target.draw(m_CellShapes[x][y], states);
+		}
+	}
+}
+
+void Grid::drawCellsText(sf::RenderTarget& target, sf::RenderStates states) const
+{
+	for (int x = 0; x < NUM_CELLS; ++x)
+	{
+		for (int y = 0; y < NUM_CELLS; ++y)
+		{
 			m_CellTexts[x][y].setString((m_Cells[x][y] != 0 ? std::to_string(m_Cells[x][y]) : ""));
 
 			auto tx = ((CELL_WIDTH + CELL_PADDING) * x) + (CELL_WIDTH / 2.f);
 			auto ty = ((CELL_HEIGHT + CELL_PADDING) * y) + (CELL_HEIGHT / 2.f);
 			auto localBounds = m_CellTexts[x][y].getLocalBounds();
+
 			m_CellTexts[x][y].setOrigin(localBounds.left + localBounds.width / 2.f, localBounds.top + localBounds.height / 2.f);
 			m_CellTexts[x][y].setPosition(tx, ty);
 
-			target.draw(m_CellShapes[x][y], states);
 			target.draw(m_CellTexts[x][y], states);
 		}
 	}
@@ -246,6 +206,73 @@ void Grid::reset()
 	m_Cells = std::vector<std::vector<int>>(NUM_CELLS, std::vector<int>(NUM_CELLS, 0));
 
 	createStartingCells();
+	initCellShapes();
+}
+
+int Grid::getRightmostCellFrom(int x, int y) const
+{
+	int rightmostX = x;
+
+	for (int i = x; i < NUM_CELLS; ++i)
+	{
+		if (isCellEmpty(i, y) && i > rightmostX)
+			rightmostX = i;
+	}
+
+	return rightmostX;
+}
+
+int Grid::getLeftmostCellFrom(int x, int y) const
+{
+	int leftmostX = x;
+
+	for (int i = x; i >= 0; --i)
+	{
+		if (isCellEmpty(i, y) && i < leftmostX)
+			leftmostX = i;
+	}
+
+	return leftmostX;
+}
+
+int Grid::getHighestCellFrom(int x, int y) const
+{
+	int highestY = y;
+
+	for (int i = y; i >= 0; --i)
+	{
+		if (isCellEmpty(x, i) && i < highestY)
+			highestY = i;
+	}
+
+	return highestY;
+}
+
+int Grid::getLowestCellFrom(int x, int y) const
+{
+	int lowestY = y;
+
+	for (int i = y; i < NUM_CELLS; ++i)
+	{
+		if (isCellEmpty(x, i) && i > lowestY)
+			lowestY = i;
+	}
+
+	return lowestY;
+}
+
+void Grid::moveCell(int x, int y, int x1, int y1)
+{
+	m_Cells[x1][y1] = m_Cells[x][y];
+	m_Cells[x][y] = 0;
+}
+
+void Grid::combineCells(int x, int y, int x1, int y1)
+{
+	m_Cells[x][y] = 0;
+	m_Cells[x1][y1] *= 2;
+
+	m_Score += m_Cells[x1][y1];
 }
 
 int Grid::getScore() const
@@ -267,6 +294,21 @@ void Grid::createNewCell()
 	m_Cells[cellPos.x][cellPos.y] = 2;
 }
 
+bool Grid::cellsEqual(int x, int y, int x1, int y1) const
+{
+	return m_Cells[x][y] == m_Cells[x1][y1];
+}
+
+bool Grid::isCellEmpty(int x, int y) const
+{
+	return m_Cells[x][y] == 0;
+}
+
+bool Grid::isGridFull() const
+{
+	return getFreeCells().size() == 0;
+}
+
 std::vector<sf::Vector2f> Grid::getFreeCells() const
 {
 	std::vector<sf::Vector2f> freeCells;
@@ -275,7 +317,7 @@ std::vector<sf::Vector2f> Grid::getFreeCells() const
 	{
 		for (int y = 0; y < NUM_CELLS; ++y)
 		{
-			if (m_Cells[x][y] == 0)
+			if (isCellEmpty(x, y))
 				freeCells.push_back({ static_cast<float>(x), static_cast<float>(y) });
 		}
 	}
@@ -285,21 +327,31 @@ std::vector<sf::Vector2f> Grid::getFreeCells() const
 
 void Grid::createLines()
 {
+	for (int i = 0; i < NUM_CELLS + 1; ++i)
+	{
+		createVerticalLine(i);
+		createHorizontalLine(i);		
+	}
+}
+
+void Grid::createVerticalLine(int column)
+{
 	sf::RectangleShape line;
 	line.setFillColor(sf::Color(128, 128, 128));
 
-	for (int i = 0; i < NUM_CELLS + 1; ++i)
-	{
-		// Vertical line
-		line.setPosition(-CELL_PADDING + (CELL_WIDTH + CELL_PADDING) * i, -CELL_PADDING);
-		line.setSize({ CELL_PADDING, m_Size.y + CELL_PADDING * NUM_CELLS });
-		m_Lines.push_back(line);
+	line.setPosition(-CELL_PADDING + (CELL_WIDTH + CELL_PADDING) * column, -CELL_PADDING);
+	line.setSize({ CELL_PADDING, m_Size.y + CELL_PADDING * NUM_CELLS });
+	m_Lines.push_back(line);
+}
 
-		// Horizontal line
-		line.setPosition(0.f, -CELL_PADDING + (CELL_HEIGHT + CELL_PADDING) * i);
-		line.setSize({ m_Size.x + CELL_PADDING * NUM_CELLS, CELL_PADDING });
-		m_Lines.push_back(line);
-	}
+void Grid::createHorizontalLine(int row)
+{
+	sf::RectangleShape line;
+	line.setFillColor(sf::Color(128, 128, 128));
+
+	line.setPosition(0.f, -CELL_PADDING + (CELL_HEIGHT + CELL_PADDING) * row);
+	line.setSize({ m_Size.x + CELL_PADDING * NUM_CELLS, CELL_PADDING });
+	m_Lines.push_back(line);
 }
 
 void Grid::createStartingCells()

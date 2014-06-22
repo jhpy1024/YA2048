@@ -28,13 +28,29 @@ private:
 	void initCellShapes();
 
 	void createLines();
+	void createVerticalLine(int column);
+	void createHorizontalLine(int row);
+
 	void createStartingCells();
 	void createNewCell();
 	std::vector<sf::Vector2f> getFreeCells() const;
 
+	int getRightmostCellFrom(int x, int y) const;
+	int getLeftmostCellFrom(int x, int y) const;
+	int getHighestCellFrom(int x, int y) const;
+	int getLowestCellFrom(int x, int y) const;
+
+	void moveCell(int x, int y, int x1, int y1);
+	void combineCells(int x, int y, int x1, int y1);
+
 	void drawBackground(sf::RenderTarget& target, sf::RenderStates states) const;
 	void drawLines(sf::RenderTarget& target, sf::RenderStates states) const;
 	void drawCells(sf::RenderTarget& target, sf::RenderStates states) const;
+	void drawCellsText(sf::RenderTarget& target, sf::RenderStates states) const;
+
+	bool isCellEmpty(int x, int y) const;
+	bool cellsEqual(int x, int y, int x1, int y1) const;
+	bool isGridFull() const;
 
 private:
 	const int NUM_CELLS;
