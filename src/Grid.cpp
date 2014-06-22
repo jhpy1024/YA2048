@@ -23,6 +23,7 @@ Grid::Grid(const sf::Vector2f& position, const sf::Vector2f& size)
 	m_Background.setFillColor(sf::Color(37, 179, 250, 255));
 
 	initCellColors();
+	initCellShapes();
 	createLines();
 	createStartingCells();	
 }
@@ -51,19 +52,6 @@ void Grid::moveUp()
 				m_Cells[x][y] = 0;
 
 				++numMoves;
-
-				// hide shape for animation
-				m_CellShapes[x][highestY].setSize({ 0.f, 0.f });
-				std::printf("(%f,%f)\n", m_CellShapes[x][highestY].getSize().x, m_CellShapes[x][highestY].getSize().y);
-				// create anim data
-				AnimData animData(sf::Vector2f((CELL_WIDTH + CELL_PADDING) * x, (CELL_HEIGHT + CELL_PADDING) * y), sf::Vector2f((CELL_WIDTH + CELL_PADDING) * x, (CELL_HEIGHT + CELL_PADDING) * highestY));
-				// create anim shape
-				sf::RectangleShape shape;
-				shape.setSize({ CELL_WIDTH, CELL_HEIGHT });
-				shape.setPosition((CELL_WIDTH + CELL_PADDING) * x, (CELL_HEIGHT + CELL_PADDING) * y);
-				shape.setFillColor(m_CellShapes[x][y].getFillColor());
-				// push to container
-				m_AnimShapes.push_back(std::make_pair(animData, shape));
 			}
 
 			if ((highestY > 0) && (m_Cells[x][highestY] == m_Cells[x][highestY-1]))
@@ -106,18 +94,6 @@ void Grid::moveDown()
 				m_Cells[x][y] = 0;
 
 				++numMoves;
-
-				// hide shape for animation
-				m_CellShapes[x][lowestY].setSize({ 0.f, 0.f });
-				// create anim data
-				AnimData animData(sf::Vector2f((CELL_WIDTH + CELL_PADDING) * x, (CELL_HEIGHT + CELL_PADDING) * y), sf::Vector2f((CELL_WIDTH + CELL_PADDING) * x, (CELL_HEIGHT + CELL_PADDING) * lowestY));
-				// create anim shape
-				sf::RectangleShape shape;
-				shape.setSize({ CELL_WIDTH, CELL_HEIGHT });
-				shape.setPosition((CELL_WIDTH + CELL_PADDING) * x, (CELL_HEIGHT + CELL_PADDING) * y);
-				shape.setFillColor(m_CellShapes[x][y].getFillColor());
-				// push to container
-				m_AnimShapes.push_back(std::make_pair(animData, shape));
 			}
 			
 			if ((lowestY < NUM_CELLS - 1) && (m_Cells[x][lowestY] == m_Cells[x][lowestY+1]))
@@ -160,18 +136,6 @@ void Grid::moveLeft()
 				m_Cells[x][y] = 0;
 
 				++numMoves;
-
-				// hide shape for animation
-				m_CellShapes[leftmostX][y].setSize({ 0.f, 0.f });
-				// create anim data
-				AnimData animData(sf::Vector2f((CELL_WIDTH + CELL_PADDING) * x, (CELL_HEIGHT + CELL_PADDING) * y), sf::Vector2f((CELL_WIDTH + CELL_PADDING) * leftmostX, (CELL_HEIGHT + CELL_PADDING) * y));
-				// create anim shape
-				sf::RectangleShape shape;
-				shape.setSize({ CELL_WIDTH, CELL_HEIGHT });
-				shape.setPosition((CELL_WIDTH + CELL_PADDING) * leftmostX, (CELL_HEIGHT + CELL_PADDING) * y);
-				shape.setFillColor(m_CellShapes[x][y].getFillColor());
-				// push to container
-				m_AnimShapes.push_back(std::make_pair(animData, shape));
 			}
 
 			if ((leftmostX > 0) && (m_Cells[leftmostX][y] == m_Cells[leftmostX-1][y]))
@@ -214,18 +178,6 @@ void Grid::moveRight()
 				m_Cells[x][y] = 0;
 
 				++numMoves;
-
-				// hide shape for animation
-				m_CellShapes[rightmostX][y].setSize({ 0.f, 0.f });
-				// create anim data
-				AnimData animData(sf::Vector2f((CELL_WIDTH + CELL_PADDING) * x, (CELL_HEIGHT + CELL_PADDING) * y), sf::Vector2f((CELL_WIDTH + CELL_PADDING) * rightmostX, (CELL_HEIGHT + CELL_PADDING) * y));
-				// create anim shape
-				sf::RectangleShape shape;
-				shape.setSize({ CELL_WIDTH, CELL_HEIGHT });
-				shape.setPosition((CELL_WIDTH + CELL_PADDING) * rightmostX, (CELL_HEIGHT + CELL_PADDING) * y);
-				shape.setFillColor(m_CellShapes[x][y].getFillColor());
-				// push to container
-				m_AnimShapes.push_back(std::make_pair(animData, shape));
 			}
 
 			if ((rightmostX < NUM_CELLS - 1) && (m_Cells[rightmostX][y] == m_Cells[rightmostX+1][y]))
@@ -251,30 +203,6 @@ void Grid::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	drawBackground(target, states);
 	drawLines(target, states);
 	drawCells(target, states);
-	drawAnimShapes(target, states);
-}
-
-void Grid::drawAnimShapes(sf::RenderTarget& target, sf::RenderStates states) const
-{
-	for (auto& pair : m_AnimShapes)
-	{
-		auto displacement = pair.first.end - pair.first.start;
-		auto length = std::sqrt(std::pow(displacement.x, 2) + std::pow(displacement.y, 2));
-		auto normalized = sf::Vector2f(displacement.x / length, displacement.y / length);
-
-		pair.second.move(normalized);
-
-		auto distance = std::sqrt(std::pow(pair.second.getPosition().x - pair.first.end.x, 2) + std::pow(pair.second.getPosition().y - pair.first.end.y, 2));
-
-		if (distance <= 2.f)
-		{
-			m_CellShapes[pair.first.end.x / (CELL_WIDTH + CELL_PADDING)][pair.first.end.y / (CELL_HEIGHT + CELL_PADDING)].setSize({ CELL_WIDTH, CELL_HEIGHT });
-			// remove. for now, hide
-			pair.second.setSize({ 0.f, 0.f });
-		}
-
-		target.draw(pair.second, states);
-	}
 }
 
 void Grid::drawBackground(sf::RenderTarget& target, sf::RenderStates states) const
@@ -294,20 +222,13 @@ void Grid::drawCells(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		for (int y = 0; y < NUM_CELLS; ++y)
 		{
-			m_CellShapes[x][y].setPosition((CELL_WIDTH + CELL_PADDING) * x, (CELL_HEIGHT + CELL_PADDING) * y);
-			m_CellShapes[x][y].setSize({ CELL_WIDTH, CELL_HEIGHT });
-
 			m_CellShapes[x][y].setFillColor(m_CellColors[m_Cells[x][y]]);
-
-			m_CellTexts[x][y].setFont(m_Font);
 			m_CellTexts[x][y].setString((m_Cells[x][y] != 0 ? std::to_string(m_Cells[x][y]) : ""));
-			m_CellTexts[x][y].setColor(sf::Color::Black);
-			auto localBounds = m_CellTexts[x][y].getLocalBounds();
-			m_CellTexts[x][y].setOrigin(localBounds.left + localBounds.width / 2.f, localBounds.top + localBounds.height / 2.f);
 
 			auto tx = ((CELL_WIDTH + CELL_PADDING) * x) + (CELL_WIDTH / 2.f);
 			auto ty = ((CELL_HEIGHT + CELL_PADDING) * y) + (CELL_HEIGHT / 2.f);
-
+			auto localBounds = m_CellTexts[x][y].getLocalBounds();
+			m_CellTexts[x][y].setOrigin(localBounds.left + localBounds.width / 2.f, localBounds.top + localBounds.height / 2.f);
 			m_CellTexts[x][y].setPosition(tx, ty);
 
 			target.draw(m_CellShapes[x][y], states);
@@ -385,6 +306,22 @@ void Grid::createStartingCells()
 {
 	for (int i = 0; i < 2; ++i)
 		createNewCell();
+}
+
+void Grid::initCellShapes()
+{
+	for (int x = 0; x < NUM_CELLS; ++x)
+	{
+		for (int y = 0; y < NUM_CELLS; ++y)
+		{
+			m_CellShapes[x][y].setPosition((CELL_WIDTH + CELL_PADDING) * x, (CELL_HEIGHT + CELL_PADDING) * y);
+			m_CellShapes[x][y].setSize({ CELL_WIDTH, CELL_HEIGHT });
+			m_CellShapes[x][y].setFillColor(m_CellColors[m_Cells[x][y]]);
+
+			m_CellTexts[x][y].setFont(m_Font);
+			m_CellTexts[x][y].setColor(sf::Color::Black);
+		}
+	}
 }
 
 void Grid::initCellColors()

@@ -25,6 +25,8 @@ public:
 
 private:
 	void initCellColors();
+	void initCellShapes();
+
 	void createLines();
 	void createStartingCells();
 	void createNewCell();
@@ -33,7 +35,6 @@ private:
 	void drawBackground(sf::RenderTarget& target, sf::RenderStates states) const;
 	void drawLines(sf::RenderTarget& target, sf::RenderStates states) const;
 	void drawCells(sf::RenderTarget& target, sf::RenderStates states) const;
-	void drawAnimShapes(sf::RenderTarget& target, sf::RenderStates states) const;
 
 private:
 	const int NUM_CELLS;
@@ -57,19 +58,6 @@ private:
 	bool m_GameOver;
 
 	int m_Score;
-
-	struct AnimData
-	{
-		AnimData(const sf::Vector2f& start, const sf::Vector2f& end)
-			: start(start)
-			, end(end)
-		{
-		}
-
-		sf::Vector2f start;
-		sf::Vector2f end;
-	};
-	mutable std::vector<std::pair<AnimData, sf::RectangleShape>> m_AnimShapes;
 };
 
 #endif
