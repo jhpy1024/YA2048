@@ -9,7 +9,7 @@ Grid::Grid(const sf::Vector2f& position, const sf::Vector2f& size)
 	, CELL_HEIGHT(size.y / NUM_CELLS)
 	, CELL_PADDING(5.f)
 	, m_Size(size)
-	, m_Background(size)
+	, m_Background({ size.x + CELL_PADDING * NUM_CELLS, size.y + CELL_PADDING * NUM_CELLS })
 	, m_CellShapes(NUM_CELLS, std::vector<sf::RectangleShape>(NUM_CELLS))
 	, m_CellTexts(NUM_CELLS, std::vector<sf::Text>(NUM_CELLS))
 	, m_Cells(NUM_CELLS, std::vector<int>(NUM_CELLS, 0))
@@ -20,7 +20,7 @@ Grid::Grid(const sf::Vector2f& position, const sf::Vector2f& size)
 
 	m_Font.loadFromFile("res/fonts/Ubuntu-M.ttf");
 
-	m_Background.setFillColor(sf::Color(37, 179, 250, 255));
+	m_Background.setFillColor(sf::Color(32, 32, 32));
 
 	initCellColors();
 	initCellShapes();
@@ -44,6 +44,25 @@ void Grid::moveUp()
 			{
 				moveCell(x, y, x, highestY);
 				++numMoves;
+
+				// Create anim data
+				sf::Vector2f startPos((CELL_WIDTH + CELL_PADDING) * x, (CELL_HEIGHT + CELL_PADDING) * y);
+				sf::Vector2f endPos((CELL_WIDTH + CELL_PADDING) * x, (CELL_HEIGHT + CELL_PADDING) * highestY);
+				AnimData animData(startPos, endPos);
+
+				// Create shape
+				sf::RectangleShape shape;
+				shape.setSize({ CELL_WIDTH, CELL_HEIGHT });
+				auto color = m_CellColors[m_Cells[x][highestY]];
+				color.a = 200;
+				shape.setFillColor(color);
+				shape.setPosition(startPos);
+
+				// Hide moved shape and text
+				m_CellShapes[x][highestY].setSize({ 0.f, 0.f });
+				m_CellTexts[x][highestY].setCharacterSize(0);
+
+				m_AnimShapes.push_back(std::make_pair(animData, shape));
 			}
 
 			if ((highestY > 0) && cellsEqual(x, highestY, x, highestY - 1))
@@ -73,6 +92,25 @@ void Grid::moveDown()
 			{
 				moveCell(x, y, x, lowestY);
 				++numMoves;
+
+				// Create anim data
+				sf::Vector2f startPos((CELL_WIDTH + CELL_PADDING) * x, (CELL_HEIGHT + CELL_PADDING) * y);
+				sf::Vector2f endPos((CELL_WIDTH + CELL_PADDING) * x, (CELL_HEIGHT + CELL_PADDING) * lowestY);
+				AnimData animData(startPos, endPos);
+
+				// Create shape
+				sf::RectangleShape shape;
+				shape.setSize({ CELL_WIDTH, CELL_HEIGHT });
+				auto color = m_CellColors[m_Cells[x][lowestY]];
+				color.a = 200;
+				shape.setFillColor(color);
+				shape.setPosition(startPos);
+
+				// Hide moved shape and text
+				m_CellShapes[x][lowestY].setSize({ 0.f, 0.f });
+				m_CellTexts[x][lowestY].setCharacterSize(0);
+
+				m_AnimShapes.push_back(std::make_pair(animData, shape));
 			}
 			
 			if ((lowestY < NUM_CELLS - 1) && cellsEqual(x, lowestY, x, lowestY + 1))
@@ -102,6 +140,25 @@ void Grid::moveLeft()
 			{
 				moveCell(x, y, leftmostX, y);
 				++numMoves;
+
+				// Create anim data
+				sf::Vector2f startPos((CELL_WIDTH + CELL_PADDING) * x, (CELL_HEIGHT + CELL_PADDING) * y);
+				sf::Vector2f endPos((CELL_WIDTH + CELL_PADDING) * leftmostX, (CELL_HEIGHT + CELL_PADDING) * y);
+				AnimData animData(startPos, endPos);
+
+				// Create shape
+				sf::RectangleShape shape;
+				shape.setSize({ CELL_WIDTH, CELL_HEIGHT });
+				auto color = m_CellColors[m_Cells[leftmostX][y]];
+				color.a = 200;
+				shape.setFillColor(color);
+				shape.setPosition(startPos);
+
+				// Hide moved shape and text
+				m_CellShapes[leftmostX][y].setSize({ 0.f, 0.f });
+				m_CellTexts[leftmostX][y].setCharacterSize(0);
+
+				m_AnimShapes.push_back(std::make_pair(animData, shape));
 			}
 
 			if ((leftmostX > 0) && cellsEqual(leftmostX, y, leftmostX - 1, y))
@@ -131,6 +188,25 @@ void Grid::moveRight()
 			{
 				moveCell(x, y, rightmostX, y);
 				++numMoves;
+
+				// Create anim data
+				sf::Vector2f startPos((CELL_WIDTH + CELL_PADDING) * x, (CELL_HEIGHT + CELL_PADDING) * y);
+				sf::Vector2f endPos((CELL_WIDTH + CELL_PADDING) * rightmostX, (CELL_HEIGHT + CELL_PADDING) * y);
+				AnimData animData(startPos, endPos);
+
+				// Create shape
+				sf::RectangleShape shape;
+				shape.setSize({ CELL_WIDTH, CELL_HEIGHT });
+				auto color = m_CellColors[m_Cells[rightmostX][y]];
+				color.a = 200;
+				shape.setFillColor(color);
+				shape.setPosition(startPos);
+
+				// Hide moved shape and text
+				m_CellShapes[rightmostX][y].setSize({ 0.f, 0.f });
+				m_CellTexts[rightmostX][y].setCharacterSize(0);
+
+				m_AnimShapes.push_back(std::make_pair(animData, shape));
 			}
 
 			if ((rightmostX < NUM_CELLS - 1) && cellsEqual(rightmostX, y, rightmostX + 1, y))
@@ -152,6 +228,7 @@ void Grid::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	drawLines(target, states);
 	drawCells(target, states);
 	drawCellsText(target, states);
+	drawAnimShapes(target, states);
 }
 
 void Grid::drawBackground(sf::RenderTarget& target, sf::RenderStates states) const
@@ -194,6 +271,36 @@ void Grid::drawCellsText(sf::RenderTarget& target, sf::RenderStates states) cons
 
 			target.draw(m_CellTexts[x][y], states);
 		}
+	}
+}
+
+void Grid::drawAnimShapes(sf::RenderTarget& target, sf::RenderStates states) const
+{
+	for (auto& pair : m_AnimShapes)
+	{
+		auto displacement = pair.first.end - pair.first.start;
+		auto lengthDisplacement = std::sqrt(std::pow(displacement.x, 2) + std::pow(displacement.y, 2));
+		auto normalized = sf::Vector2f(displacement.x / lengthDisplacement, displacement.y / lengthDisplacement);
+
+		auto& shape = pair.second;
+		shape.move(normalized * 20.f);
+
+		auto shapePos = shape.getPosition();
+		int shapeTileX = std::round(shapePos.x / (CELL_WIDTH + CELL_PADDING));
+		int shapeTileY = std::round(shapePos.y / (CELL_HEIGHT + CELL_PADDING));
+		int tileX = std::round(pair.first.end.x / (CELL_WIDTH + CELL_PADDING));
+		int tileY = std::round(pair.first.end.y / (CELL_HEIGHT + CELL_PADDING));
+
+		if ((tileX == shapeTileX) && (tileY == shapeTileY))
+		{
+			m_CellShapes[tileX][tileY].setSize({ CELL_WIDTH, CELL_HEIGHT });
+			m_CellTexts[tileX][tileY].setCharacterSize(30);
+
+			// TODO: Remove shape, not just hide.
+			shape.setSize({ 0.f, 0.f });
+		}
+
+		target.draw(shape, states);
 	}
 }
 

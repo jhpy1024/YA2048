@@ -47,6 +47,7 @@ private:
 	void drawLines(sf::RenderTarget& target, sf::RenderStates states) const;
 	void drawCells(sf::RenderTarget& target, sf::RenderStates states) const;
 	void drawCellsText(sf::RenderTarget& target, sf::RenderStates states) const;
+	void drawAnimShapes(sf::RenderTarget& target, sf::RenderStates states) const;
 
 	bool isCellEmpty(int x, int y) const;
 	bool cellsEqual(int x, int y, int x1, int y1) const;
@@ -74,6 +75,16 @@ private:
 	bool m_GameOver;
 
 	int m_Score;
+
+	struct AnimData {
+		sf::Vector2f start;
+		sf::Vector2f end;
+
+		AnimData(const sf::Vector2f& start, const sf::Vector2f& end)
+			: start(start), end(end) 
+		{}
+	};
+	mutable std::vector<std::pair<AnimData, sf::RectangleShape>> m_AnimShapes;
 };
 
 #endif
