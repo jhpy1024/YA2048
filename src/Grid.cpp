@@ -223,6 +223,12 @@ void Grid::drawAnimShapes(sf::RenderTarget& target, sf::RenderStates states) con
 		int tileX = std::round(pair.first.end.x / (CELL_WIDTH + CELL_PADDING));
 		int tileY = std::round(pair.first.end.y / (CELL_HEIGHT + CELL_PADDING));
 
+		auto alphaIncrement = 255 / (lengthDisplacement / (normalized.x == 0.f ? normalized.y * 20.f : normalized.x * 20.f));
+		auto newColor = shape.getFillColor();
+		if (newColor.a < 255)
+			newColor.a += alphaIncrement;
+		shape.setFillColor(newColor);
+
 		if ((tileX == shapeTileX) && (tileY == shapeTileY))
 		{
 			m_CellShapes[tileX][tileY].setSize({ CELL_WIDTH, CELL_HEIGHT });
@@ -245,7 +251,7 @@ void Grid::createAnimation(const sf::Vector2f& start, const sf::Vector2f& end)
 	sf::RectangleShape shape;
 	shape.setSize({ CELL_WIDTH, CELL_HEIGHT });
 	auto color = m_CellColors[m_Cells[end.x][end.y]];
-	color.a = 200;
+	color.a = 0;
 	shape.setFillColor(color);
 	shape.setPosition(startPos);
 	
