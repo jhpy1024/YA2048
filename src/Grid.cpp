@@ -157,10 +157,10 @@ void Grid::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	states.transform *= getTransform();
 
 	drawBackground(target, states);
-	drawCells(target, states);
-	drawCellsText(target, states);
 	drawAnimShapes(target, states);
 	drawLines(target, states);
+	drawCells(target, states);
+	drawCellsText(target, states);
 }
 
 void Grid::drawBackground(sf::RenderTarget& target, sf::RenderStates states) const
@@ -451,7 +451,7 @@ void Grid::initCellShapes()
 
 void Grid::initCellColors()
 {
-	m_CellColors[0] = sf::Color(32, 32, 32);
+	m_CellColors[0] = sf::Color(0, 0, 0, 0);
 	m_CellColors[2] = sf::Color(85, 98, 112);
 	m_CellColors[4] = sf::Color(78, 205, 196);
 	m_CellColors[8] = sf::Color(199, 244, 100);
