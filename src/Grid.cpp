@@ -90,8 +90,6 @@ void Grid::moveDown()
 		createNewCell();
 }
 
-//hello
-
 void Grid::moveLeft()
 {
 	int numMoves = 0;
