@@ -157,10 +157,10 @@ void Grid::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	states.transform *= getTransform();
 
 	drawBackground(target, states);
-	drawLines(target, states);
 	drawCells(target, states);
 	drawCellsText(target, states);
 	drawAnimShapes(target, states);
+	drawLines(target, states);
 }
 
 void Grid::drawBackground(sf::RenderTarget& target, sf::RenderStates states) const
