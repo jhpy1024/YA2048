@@ -129,7 +129,7 @@ void Grid::moveRight()
 			{
 				moveCell(x, y, rightmostX, y);
 				createAnimation({ x, y }, { rightmostX, y });
-
+			
 				++numMoves;
 			}
 
@@ -145,11 +145,15 @@ void Grid::completeMove(int numMoves)
 {
 	if ((numMoves == 0) && isGridFull())
 	{
-		if (isGridFull())
-			m_GameOver = true;
+		m_GameOver = true;
+		//dont need if statement cuz isGridFull is always true thats what the 
+		//first if statement is for
 	}
-	else
+	else if (numMoves != 0)
+	{
+		//does not spawn more squares if no boxes are able to move
 		createNewCell();
+	}
 }
 
 void Grid::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -289,16 +293,19 @@ void Grid::updateCombineAnimation() const
 	}
 }
 
-void Grid::reset()
+void Grid::reset(std::string type)
 {
 	m_GameOver = false;
-	m_Score = 0;
-	m_CellShapes = std::vector<std::vector<sf::RectangleShape>>(NUM_CELLS, std::vector<sf::RectangleShape>(NUM_CELLS));
-	m_CellTexts = std::vector<std::vector<sf::Text>>(NUM_CELLS, std::vector<sf::Text>(NUM_CELLS));
-	m_Cells = std::vector<std::vector<int>>(NUM_CELLS, std::vector<int>(NUM_CELLS, 0));
+	if (type == "again")
+	{
+		m_Score = 0;
+		m_CellShapes = std::vector<std::vector<sf::RectangleShape>>(NUM_CELLS, std::vector<sf::RectangleShape>(NUM_CELLS));
+		m_CellTexts = std::vector<std::vector<sf::Text>>(NUM_CELLS, std::vector<sf::Text>(NUM_CELLS));
+		m_Cells = std::vector<std::vector<int>>(NUM_CELLS, std::vector<int>(NUM_CELLS, 0));
 
-	createStartingCells();
-	initCellShapes();
+		createStartingCells();
+		initCellShapes();
+	}
 }
 
 int Grid::getRightmostCellFrom(int x, int y) const

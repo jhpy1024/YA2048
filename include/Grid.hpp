@@ -19,7 +19,7 @@ public:
 
 	bool isGameOver() const;
 
-	void reset();
+	void reset(std::string type);
 
 	int getScore() const;
 
