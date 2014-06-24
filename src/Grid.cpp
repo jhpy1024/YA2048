@@ -56,7 +56,11 @@ void Grid::moveUp()
 	if ((numMoves == 0) && isGridFull())
 		m_GameOver = true;
 	else
-		createNewCell();
+	{
+		//does not spawn more squares if no boxes are able to move
+		if (numMoves != 0)
+			createNewCell();	
+	}
 }
 
 void Grid::moveDown()
@@ -87,7 +91,11 @@ void Grid::moveDown()
 	if ((numMoves == 0) && isGridFull())
 		m_GameOver = true;
 	else
-		createNewCell();
+	{
+		//does not spawn more squares if no boxes are able to move
+		if (numMoves != 0)
+			createNewCell();
+	}
 }
 
 void Grid::moveLeft()
@@ -118,7 +126,11 @@ void Grid::moveLeft()
 	if ((numMoves == 0) && isGridFull())
 		m_GameOver = true;
 	else
-		createNewCell();	
+	{
+		//does not spawn more squares if no boxes are able to move
+		if (numMoves != 0)
+			createNewCell();
+	}
 }
 
 void Grid::moveRight()
@@ -149,7 +161,11 @@ void Grid::moveRight()
 	if ((numMoves == 0) && isGridFull())
 		m_GameOver = true;
 	else
-		createNewCell();
+	{
+		//does not spawn more squares if no boxes are able to move
+		if (numMoves != 0)
+			createNewCell();
+	}
 }
 
 void Grid::draw(sf::RenderTarget& target, sf::RenderStates states) const
