@@ -57,6 +57,7 @@ private:
 	sf::Vector2f worldToTile(const sf::Vector2f& pos) const;
 
 	void createAnimation(const sf::Vector2f& start, const sf::Vector2f& end);
+	void updateCombineAnimation() const;
 
 	void completeMove(int numMoves);
 
@@ -92,6 +93,8 @@ private:
 		{}
 	};
 	mutable std::vector<std::pair<AnimData, sf::RectangleShape>> m_AnimShapes;
+
+	mutable std::vector<std::vector<bool>> m_IsCombining;
 };
 
 #endif

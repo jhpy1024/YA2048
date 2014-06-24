@@ -15,6 +15,7 @@ Grid::Grid(const sf::Vector2f& position, const sf::Vector2f& size)
 	, m_Cells(NUM_CELLS, std::vector<int>(NUM_CELLS, 0))
 	, m_GameOver(false)
 	, m_Score(0)
+	, m_IsCombining(NUM_CELLS, std::vector<bool>(NUM_CELLS, false))
 {
 	setPosition(position.x - CELL_PADDING * NUM_CELLS / 2, position.y);
 
@@ -175,6 +176,8 @@ void Grid::drawLines(sf::RenderTarget& target, sf::RenderStates states) const
 
 void Grid::drawCells(sf::RenderTarget& target, sf::RenderStates states) const
 {
+	updateCombineAnimation();
+
 	for (int x = 0; x < NUM_CELLS; ++x)
 	{
 		for (int y = 0; y < NUM_CELLS; ++y)
@@ -259,6 +262,33 @@ void Grid::createAnimation(const sf::Vector2f& start, const sf::Vector2f& end)
 	m_AnimShapes.push_back(std::make_pair(animData, shape));
 }
 
+void Grid::updateCombineAnimation() const
+{
+	for (int x = 0; x < NUM_CELLS; ++x)
+	{
+		for (int y = 0; y < NUM_CELLS; ++y)
+		{
+			if (m_IsCombining[x][y])
+			{
+				auto shapeSize = m_CellShapes[x][y].getSize();
+				if (shapeSize.x < CELL_WIDTH && shapeSize.y < CELL_HEIGHT)
+				{
+					// TODO: Replace magic number with constant!
+					shapeSize.x += CELL_WIDTH / 10.f;
+					shapeSize.y += CELL_HEIGHT / 10.f;
+				}
+				else
+				{
+					shapeSize = { CELL_WIDTH, CELL_HEIGHT };
+					m_CellTexts[x][y].setString(std::to_string(m_Cells[x][y]));
+				}
+
+				m_CellShapes[x][y].setSize(shapeSize);
+			}
+		}
+	}
+}
+
 void Grid::reset()
 {
 	m_GameOver = false;
@@ -335,6 +365,10 @@ void Grid::combineCells(int x, int y, int x1, int y1)
 	m_Cells[x1][y1] *= 2;
 
 	m_Score += m_Cells[x1][y1];
+
+	m_CellShapes[x1][y1].setSize({ 0.f, 0.f });
+	m_CellTexts[x1][y1].setString("");
+	m_IsCombining[x1][y1] = true;
 }
 
 sf::Vector2f Grid::tileToWorld(const sf::Vector2f& pos) const
