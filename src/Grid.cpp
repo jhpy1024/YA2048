@@ -43,7 +43,8 @@ void Grid::moveUp()
 			if (highestY != y)
 			{
 				moveCell(x, y, x, highestY);
-				createAnimation({ x, y }, { x, highestY });
+				createAnimation(sf::Vector2f(x, y), sf::Vector2f(x, highestY));
+				//createAnimation({ x, y }, { x, highestY });
 
 				++numMoves;
 			}
@@ -78,7 +79,8 @@ void Grid::moveDown()
 			if (lowestY != y)
 			{
 				moveCell(x, y, x, lowestY);
-				createAnimation({ x, y }, { x, lowestY });
+				createAnimation(sf::Vector2f(x, y), sf::Vector2f(x, lowestY));
+				//createAnimation({ x, y }, { x, lowestY });
 
 				++numMoves;
 			}
@@ -113,7 +115,8 @@ void Grid::moveLeft()
 			if (leftmostX != x)
 			{
 				moveCell(x, y, leftmostX, y);
-				createAnimation({ x, y }, { leftmostX, y });
+				createAnimation(sf::Vector2f(x, y), sf::Vector2f(leftmostX, y));
+				//createAnimation({ x, y }, { leftmostX, y });
 
 				++numMoves;
 			}
@@ -148,7 +151,8 @@ void Grid::moveRight()
 			if (rightmostX != x)
 			{
 				moveCell(x, y, rightmostX, y);
-				createAnimation({ x, y }, { rightmostX, y });
+				createAnimation(sf::Vector2f(x, y), sf::Vector2f(rightmostX, y));
+				//createAnimation({ x, y }, { rightmostX, y });
 				
 				++numMoves;
 			}
