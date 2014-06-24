@@ -15,6 +15,7 @@ Grid::Grid(const sf::Vector2f& position, const sf::Vector2f& size)
 	, m_Cells(NUM_CELLS, std::vector<int>(NUM_CELLS, 0))
 	, m_GameOver(false)
 	, m_Score(0)
+	, m_IsCombining(NUM_CELLS, std::vector<bool>(NUM_CELLS, false))
 {
 	setPosition(position.x - CELL_PADDING * NUM_CELLS / 2, position.y);
 
@@ -25,7 +26,7 @@ Grid::Grid(const sf::Vector2f& position, const sf::Vector2f& size)
 	initCellColors();
 	initCellShapes();
 	createLines();
-	createStartingCells();	
+	createStartingCells();
 }
 
 void Grid::moveUp()
@@ -43,8 +44,7 @@ void Grid::moveUp()
 			if (highestY != y)
 			{
 				moveCell(x, y, x, highestY);
-				createAnimation(sf::Vector2f(x, y), sf::Vector2f(x, highestY));
-				//createAnimation({ x, y }, { x, highestY });
+				createAnimation({ x, y }, { x, highestY });
 
 				++numMoves;
 			}
@@ -54,14 +54,7 @@ void Grid::moveUp()
 		}
 	}
 
-	if ((numMoves == 0) && isGridFull())
-		m_GameOver = true;
-	else
-	{
-		//does not spawn more squares if no boxes are able to move
-		if (numMoves != 0)
-			createNewCell();	
-	}
+	completeMove(numMoves);
 }
 
 void Grid::moveDown()
@@ -79,25 +72,17 @@ void Grid::moveDown()
 			if (lowestY != y)
 			{
 				moveCell(x, y, x, lowestY);
-				createAnimation(sf::Vector2f(x, y), sf::Vector2f(x, lowestY));
-				//createAnimation({ x, y }, { x, lowestY });
+				createAnimation({ x, y }, { x, lowestY });
 
 				++numMoves;
 			}
-			
+
 			if ((lowestY < NUM_CELLS - 1) && cellsEqual(x, lowestY, x, lowestY + 1))
 				combineCells(x, lowestY, x, lowestY + 1);
 		}
 	}
 
-	if ((numMoves == 0) && isGridFull())
-		m_GameOver = true;
-	else
-	{
-		//does not spawn more squares if no boxes are able to move
-		if (numMoves != 0)
-			createNewCell();
-	}
+	completeMove(numMoves);
 }
 
 void Grid::moveLeft()
@@ -115,8 +100,7 @@ void Grid::moveLeft()
 			if (leftmostX != x)
 			{
 				moveCell(x, y, leftmostX, y);
-				createAnimation(sf::Vector2f(x, y), sf::Vector2f(leftmostX, y));
-				//createAnimation({ x, y }, { leftmostX, y });
+				createAnimation({ x, y }, { leftmostX, y });
 
 				++numMoves;
 			}
@@ -126,14 +110,7 @@ void Grid::moveLeft()
 		}
 	}
 
-	if ((numMoves == 0) && isGridFull())
-		m_GameOver = true;
-	else
-	{
-		//does not spawn more squares if no boxes are able to move
-		if (numMoves != 0)
-			createNewCell();
-	}
+	completeMove(numMoves);
 }
 
 void Grid::moveRight()
@@ -151,9 +128,8 @@ void Grid::moveRight()
 			if (rightmostX != x)
 			{
 				moveCell(x, y, rightmostX, y);
-				createAnimation(sf::Vector2f(x, y), sf::Vector2f(rightmostX, y));
-				//createAnimation({ x, y }, { rightmostX, y });
-				
+				createAnimation({ x, y }, { rightmostX, y });
+			
 				++numMoves;
 			}
 
@@ -162,13 +138,21 @@ void Grid::moveRight()
 		}
 	}
 
+	completeMove(numMoves);
+}
+
+void Grid::completeMove(int numMoves)
+{
 	if ((numMoves == 0) && isGridFull())
+	{
 		m_GameOver = true;
-	else
+		//dont need if statement cuz isGridFull is always true thats what the 
+		//first if statement is for
+	}
+	else if (numMoves != 0)
 	{
 		//does not spawn more squares if no boxes are able to move
-		if (numMoves != 0)
-			createNewCell();
+		createNewCell();
 	}
 }
 
@@ -188,7 +172,7 @@ void Grid::drawBackground(sf::RenderTarget& target, sf::RenderStates states) con
 	target.draw(m_Background, states);
 }
 
-void Grid::drawLines(sf::RenderTarget& target, sf::RenderStates states) const 
+void Grid::drawLines(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	for (auto& line : m_Lines)
 		target.draw(line, states);
@@ -196,6 +180,8 @@ void Grid::drawLines(sf::RenderTarget& target, sf::RenderStates states) const
 
 void Grid::drawCells(sf::RenderTarget& target, sf::RenderStates states) const
 {
+	updateCombineAnimation();
+
 	for (int x = 0; x < NUM_CELLS; ++x)
 	{
 		for (int y = 0; y < NUM_CELLS; ++y)
@@ -274,22 +260,52 @@ void Grid::createAnimation(const sf::Vector2f& start, const sf::Vector2f& end)
 	color.a = 0;
 	shape.setFillColor(color);
 	shape.setPosition(startPos);
-	
+
 	m_CellShapes[end.x][end.y].setSize({ 0.f, 0.f });
 	m_CellTexts[end.x][end.y].setCharacterSize(0);
 	m_AnimShapes.push_back(std::make_pair(animData, shape));
 }
 
-void Grid::reset()
+void Grid::updateCombineAnimation() const
+{
+	for (int x = 0; x < NUM_CELLS; ++x)
+	{
+		for (int y = 0; y < NUM_CELLS; ++y)
+		{
+			if (m_IsCombining[x][y])
+			{
+				auto shapeSize = m_CellShapes[x][y].getSize();
+				if (shapeSize.x < CELL_WIDTH && shapeSize.y < CELL_HEIGHT)
+				{
+					// TODO: Replace magic number with constant!
+					shapeSize.x += CELL_WIDTH / 10.f;
+					shapeSize.y += CELL_HEIGHT / 10.f;
+				}
+				else
+				{
+					shapeSize = { CELL_WIDTH, CELL_HEIGHT };
+					m_CellTexts[x][y].setString(std::to_string(m_Cells[x][y]));
+				}
+
+				m_CellShapes[x][y].setSize(shapeSize);
+			}
+		}
+	}
+}
+
+void Grid::reset(std::string type)
 {
 	m_GameOver = false;
-	m_Score = 0;
-	m_CellShapes = std::vector<std::vector<sf::RectangleShape>>(NUM_CELLS, std::vector<sf::RectangleShape>(NUM_CELLS));
-	m_CellTexts = std::vector<std::vector<sf::Text>>(NUM_CELLS, std::vector<sf::Text>(NUM_CELLS));
-	m_Cells = std::vector<std::vector<int>>(NUM_CELLS, std::vector<int>(NUM_CELLS, 0));
+	if (type == "again")
+	{
+		m_Score = 0;
+		m_CellShapes = std::vector<std::vector<sf::RectangleShape>>(NUM_CELLS, std::vector<sf::RectangleShape>(NUM_CELLS));
+		m_CellTexts = std::vector<std::vector<sf::Text>>(NUM_CELLS, std::vector<sf::Text>(NUM_CELLS));
+		m_Cells = std::vector<std::vector<int>>(NUM_CELLS, std::vector<int>(NUM_CELLS, 0));
 
-	createStartingCells();
-	initCellShapes();
+		createStartingCells();
+		initCellShapes();
+	}
 }
 
 int Grid::getRightmostCellFrom(int x, int y) const
@@ -356,6 +372,10 @@ void Grid::combineCells(int x, int y, int x1, int y1)
 	m_Cells[x1][y1] *= 2;
 
 	m_Score += m_Cells[x1][y1];
+
+	m_CellShapes[x1][y1].setSize({ 0.f, 0.f });
+	m_CellTexts[x1][y1].setString("");
+	m_IsCombining[x1][y1] = true;
 }
 
 sf::Vector2f Grid::tileToWorld(const sf::Vector2f& pos) const
@@ -429,7 +449,7 @@ void Grid::createLines()
 	for (int i = 0; i < NUM_CELLS + 1; ++i)
 	{
 		createVerticalLine(i);
-		createHorizontalLine(i);		
+		createHorizontalLine(i);
 	}
 }
 

@@ -18,7 +18,7 @@ Game::Game()
 	m_GameOverFont.loadFromFile("res/fonts/Ubuntu-M.ttf");
 	m_GameOverText.setFont(m_GameOverFont);
 	m_GameOverText.setCharacterSize(24);
-	m_GameOverText.setString("          Game Over!\nPress [SPACE] to retry");
+	m_GameOverText.setString("          Game Over!\nPress [SPACE] to retry\nOr [ESCAPE] to go back");
 	auto localBounds = m_GameOverText.getLocalBounds();
 	m_GameOverText.setOrigin(localBounds.left + localBounds.width / 2.f, localBounds.top + localBounds.height / 2.f);
 	m_GameOverText.setPosition(WIDTH / 2.f, HEIGHT / 2.f);
@@ -53,12 +53,11 @@ void Game::handleKeyPress(const sf::Event& event)
 	if (m_GameOver)
 	{
 		if (event.key.code == sf::Keyboard::Space)
-		{
-			m_GameOver = false;
-			m_Grid.reset();
-		}
+			m_Grid.reset("tryAgain");
+		else if (event.key.code == sf::Keyboard::Escape)
+			m_Grid.reset("goBack");
 	}
-	else
+	if (!m_GameOver)
 	{
 		if (event.key.code == sf::Keyboard::Up)
 			m_Grid.moveUp();
