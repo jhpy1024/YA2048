@@ -58,6 +58,8 @@ private:
 
 	void createAnimation(const sf::Vector2f& start, const sf::Vector2f& end);
 
+	void completeMove(int numMoves);
+
 private:
 	const int NUM_CELLS;
 	const float CELL_WIDTH;
@@ -72,7 +74,7 @@ private:
 	mutable std::vector<std::vector<sf::RectangleShape>> m_CellShapes;
 	mutable std::map<int, sf::Color> m_CellColors;
 
-	sf::Font m_Font;	
+	sf::Font m_Font;
 	mutable std::vector<std::vector<sf::Text>> m_CellTexts;
 
 	std::vector<std::vector<int>> m_Cells;
@@ -86,7 +88,7 @@ private:
 		sf::Vector2f end;
 
 		AnimData(const sf::Vector2f& start, const sf::Vector2f& end)
-			: start(start), end(end) 
+			: start(start), end(end)
 		{}
 	};
 	mutable std::vector<std::pair<AnimData, sf::RectangleShape>> m_AnimShapes;

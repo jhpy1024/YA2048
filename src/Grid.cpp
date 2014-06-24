@@ -25,7 +25,7 @@ Grid::Grid(const sf::Vector2f& position, const sf::Vector2f& size)
 	initCellColors();
 	initCellShapes();
 	createLines();
-	createStartingCells();	
+	createStartingCells();
 }
 
 void Grid::moveUp()
@@ -53,10 +53,7 @@ void Grid::moveUp()
 		}
 	}
 
-	if ((numMoves == 0) && isGridFull())
-		m_GameOver = true;
-	else
-		createNewCell();
+	completeMove(numMoves);
 }
 
 void Grid::moveDown()
@@ -78,16 +75,13 @@ void Grid::moveDown()
 
 				++numMoves;
 			}
-			
+
 			if ((lowestY < NUM_CELLS - 1) && cellsEqual(x, lowestY, x, lowestY + 1))
 				combineCells(x, lowestY, x, lowestY + 1);
 		}
 	}
 
-	if ((numMoves == 0) && isGridFull())
-		m_GameOver = true;
-	else
-		createNewCell();
+	completeMove(numMoves);
 }
 
 void Grid::moveLeft()
@@ -115,10 +109,7 @@ void Grid::moveLeft()
 		}
 	}
 
-	if ((numMoves == 0) && isGridFull())
-		m_GameOver = true;
-	else
-		createNewCell();	
+	completeMove(numMoves);
 }
 
 void Grid::moveRight()
@@ -137,7 +128,7 @@ void Grid::moveRight()
 			{
 				moveCell(x, y, rightmostX, y);
 				createAnimation({ x, y }, { rightmostX, y });
-				
+
 				++numMoves;
 			}
 
@@ -146,8 +137,16 @@ void Grid::moveRight()
 		}
 	}
 
+	completeMove(numMoves);
+}
+
+void Grid::completeMove(int numMoves)
+{
 	if ((numMoves == 0) && isGridFull())
-		m_GameOver = true;
+	{
+		if (isGridFull())
+			m_GameOver = true;
+	}
 	else
 		createNewCell();
 }
@@ -168,7 +167,7 @@ void Grid::drawBackground(sf::RenderTarget& target, sf::RenderStates states) con
 	target.draw(m_Background, states);
 }
 
-void Grid::drawLines(sf::RenderTarget& target, sf::RenderStates states) const 
+void Grid::drawLines(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	for (auto& line : m_Lines)
 		target.draw(line, states);
@@ -254,7 +253,7 @@ void Grid::createAnimation(const sf::Vector2f& start, const sf::Vector2f& end)
 	color.a = 0;
 	shape.setFillColor(color);
 	shape.setPosition(startPos);
-	
+
 	m_CellShapes[end.x][end.y].setSize({ 0.f, 0.f });
 	m_CellTexts[end.x][end.y].setCharacterSize(0);
 	m_AnimShapes.push_back(std::make_pair(animData, shape));
@@ -409,7 +408,7 @@ void Grid::createLines()
 	for (int i = 0; i < NUM_CELLS + 1; ++i)
 	{
 		createVerticalLine(i);
-		createHorizontalLine(i);		
+		createHorizontalLine(i);
 	}
 }
 
