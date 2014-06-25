@@ -143,11 +143,10 @@ void Grid::moveRight()
 
 void Grid::completeMove(int numMoves)
 {
+	// TODO: Check if any cells can be combined before
+	//       ending the game.
 	if ((numMoves == 0) && isGridFull())
-	{
-		if (isGridFull())
-			m_GameOver = true;
-	}
+		m_GameOver = true;
 	else
 		createNewCell();
 }
